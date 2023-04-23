@@ -34,7 +34,7 @@ const renderTaskItem = (taskObject) => {
   completedCheckbox.type = "checkbox";
   completedCheckbox.setAttribute("id", "completed");
   taskLabel.addEventListener("click", () => {
-    // Inbox.sePropertyOf("completed", completedCheckbox.checked, taskObject.task);
+    Inbox.sePropertyOf("completed", completedCheckbox.checked, taskObject.task);
   });
   const taskText = document.createTextNode(taskObject.task);
   taskItem.classList.add(taskObject.completed, taskObject.dueDate);
