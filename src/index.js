@@ -63,8 +63,9 @@ addTaskButton.addEventListener("click", () => {
 
 // When user clicks + Add Project
 addProjectButton.addEventListener("click", () => {
-  // Hide Button and create a small context menu for naming the project
   const aside = document.querySelector("aside");
+
+  // Hide Button and create a small context menu for naming the project
   addProjectButton.classList.add("hidden");
 
   const label = document.createElement("label");
@@ -84,4 +85,17 @@ addProjectButton.addEventListener("click", () => {
   aside.append(label);
   aside.append(addButton);
   aside.append(cancelButton);
+
+  const removeContextMenu = () => {
+    label.remove();
+    addButton.remove();
+    cancelButton.remove();
+
+    addProjectButton.classList.remove("hidden");
+  };
+
+  // When user clicks Cancel
+  cancelButton.addEventListener("click", () => {
+    removeContextMenu();
+  });
 });
