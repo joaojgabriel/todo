@@ -8,7 +8,7 @@ const Inbox = (() => {
       return projects[project];
     },
     getAllTasks() {
-      return { ...Object.values(projects) };
+      return [].concat(...Object.values(projects));
     },
     addTaskToProject(task, project) {
       projects[project].push(task);
