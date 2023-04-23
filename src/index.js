@@ -24,6 +24,7 @@ const Inbox = (() => {
 const addTaskButton = document.querySelector("button#add-task");
 const newTaskInput = document.querySelector("input#new-task");
 const taskList = document.querySelector("ul#task-list");
+const addProjectButton = document.querySelector("button#add-project");
 
 const renderTaskItem = (taskObject) => {
   // Append a list item with a checkbox and a title for the task
@@ -33,7 +34,9 @@ const renderTaskItem = (taskObject) => {
   const completedCheckbox = document.createElement("input");
   completedCheckbox.type = "checkbox";
   completedCheckbox.setAttribute("id", "completed");
+  // When user clicks the text or checkbox of a task
   taskLabel.addEventListener("click", () => {
+    // Toggle checked state of the task in the Inbox module
     Inbox.sePropertyOf("completed", completedCheckbox.checked, taskObject.task);
   });
   const taskText = document.createTextNode(taskObject.task);
@@ -45,7 +48,7 @@ const renderTaskItem = (taskObject) => {
   taskList.append(taskItem);
 };
 
-// When user clicks + Add Task
+// When user clicks + Add Task in any context
 addTaskButton.addEventListener("click", () => {
   // Check if there is text in the input field
   if (!newTaskInput.value) return;
@@ -56,4 +59,29 @@ addTaskButton.addEventListener("click", () => {
   newTaskInput.value = "";
 
   renderTaskItem(taskObject);
+});
+
+// When user clicks + Add Project
+addProjectButton.addEventListener("click", () => {
+  // Hide Button and create a small context menu for naming the project
+  const aside = document.querySelector("aside");
+  addProjectButton.classList.add("hidden");
+
+  const label = document.createElement("label");
+  const labelText = document.createTextNode("Name your project");
+  const textInput = document.createElement("input");
+  textInput.setAttribute("type", "text");
+  textInput.setAttribute("placeholder", "My Project");
+
+  label.append(labelText);
+  label.append(textInput);
+
+  const addButton = document.createElement("button");
+  addButton.textContent = "Add";
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "Cancel";
+
+  aside.append(label);
+  aside.append(addButton);
+  aside.append(cancelButton);
 });
