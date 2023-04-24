@@ -1,6 +1,6 @@
 import "./style.css";
 
-const StateManager = (() => {
+const Context = (() => {
   const contexts = {};
   return {
     getTasksFrom(context) {
@@ -17,7 +17,7 @@ const StateManager = (() => {
       }
       return contexts[context];
     },
-    addTaskToContext(task, context) {
+    addTaskTo(task, context) {
       contexts[context].push(task);
     },
     setPropertyOf(property, value, taskName, context) {
@@ -47,7 +47,7 @@ const runContext = (context) => {
 
     // Control the logic for Completed task
     taskLabel.addEventListener("click", () => {
-      StateManager.setPropertyOf(
+      Context.setPropertyOf(
         "completed",
         completedCheckbox.checked,
         taskObject.name,
@@ -74,13 +74,13 @@ const runContext = (context) => {
     // If so, create a task object and add it to project list
     const taskObject = { name: newTaskName, dueDate: null, completed: false };
 
-    StateManager.addTaskToContext(taskObject, context);
+    Context.addTaskTo(taskObject, context);
     newTaskInput.value = "";
 
     renderTaskItem(taskObject);
   });
 
-  const tasks = StateManager.getTasksFrom(context);
+  const tasks = Context.getTasksFrom(context);
 
   if (!tasks) return;
 
@@ -141,7 +141,7 @@ addProjectButton.addEventListener("click", () => {
     // Check if there is text in the input field and the project name is valid
     if (!newProjectName) return;
     if (
-      StateManager.isAContext(newProjectName) ||
+      Context.isAContext(newProjectName) ||
       newProjectName === "default"
     ) {
       aside.classList.add("invalid");
