@@ -17,7 +17,7 @@ const Context = (() => {
       return contexts[context];
     },
     addTaskTo(task, context) {
-      console.log(context)
+      console.log(context);
       contexts[context].push(task);
     },
     setPropertyOf(property, value, taskName, context) {
@@ -90,71 +90,77 @@ const runContext = (context) => {
   tasks.forEach((task) => renderTaskItem(task));
 };
 
-const addProjectButton = document.querySelector("button#add-project");
 // When user clicks + Add Project
-addProjectButton.addEventListener("click", () => {
-  const aside = document.querySelector("aside");
+(() => {
+  const addProjectButton = document.querySelector("button#add-project");
+  addProjectButton.addEventListener("click", () => {
+    const aside = document.querySelector("aside");
 
-  // Hide Button and create a small context menu for naming the project
-  addProjectButton.classList.add("hidden");
+    // Hide Button and create a small context menu for naming the project
+    addProjectButton.classList.add("hidden");
 
-  const label = document.createElement("label");
-  const labelText = document.createTextNode("Name your project");
-  const newProjectInput = document.createElement("input");
-  newProjectInput.setAttribute("type", "text");
-  newProjectInput.setAttribute("placeholder", "My Project");
+    const label = document.createElement("label");
+    const labelText = document.createTextNode("Name your project");
+    const newProjectInput = document.createElement("input");
+    newProjectInput.setAttribute("type", "text");
+    newProjectInput.setAttribute("placeholder", "My Project");
 
-  label.append(labelText);
-  label.append(newProjectInput);
+    label.append(labelText);
+    label.append(newProjectInput);
 
-  const addButton = document.createElement("button");
-  addButton.textContent = "Add";
-  const cancelButton = document.createElement("button");
-  cancelButton.textContent = "Cancel";
+    const addButton = document.createElement("button");
+    addButton.textContent = "Add";
+    const cancelButton = document.createElement("button");
+    cancelButton.textContent = "Cancel";
 
-  aside.append(label);
-  aside.append(addButton);
-  aside.append(cancelButton);
+    aside.append(label);
+    aside.append(addButton);
+    aside.append(cancelButton);
 
-  const closeNewProjectPrompt = () => {
-    label.remove();
-    addButton.remove();
-    cancelButton.remove();
+    const closeNewProjectPrompt = () => {
+      label.remove();
+      addButton.remove();
+      cancelButton.remove();
 
-    addProjectButton.classList.remove("hidden");
-  };
+      addProjectButton.classList.remove("hidden");
+    };
 
-  // When user clicks Cancel
-  cancelButton.addEventListener("click", () => {
-    closeNewProjectPrompt();
-    aside.classList.remove("invalid");
+    // When user clicks Cancel
+    cancelButton.addEventListener("click", () => {
+      closeNewProjectPrompt();
+      aside.classList.remove("invalid");
+    });
+
+    // When user clicks Add
+    addButton.addEventListener("click", () => {
+      const newProjectName = newProjectInput.value;
+      const nav = document.querySelector("aside > nav");
+
+      // Check if there is text in the input field and the project name is valid
+      if (!newProjectName) return;
+      if (Context.isAContext(newProjectName) || newProjectName === "default") {
+        aside.classList.add("invalid");
+        return;
+      }
+
+      // Reset values
+      newProjectInput.value = "";
+      aside.classList.remove("invalid");
+
+      // Remove menu and initialize project
+      closeNewProjectPrompt();
+      runContext(newProjectName);
+
+      // Add project button to nav
+      const projectLink = document.createElement("button");
+      projectLink.textContent = newProjectName;
+      nav.append(projectLink);
+
+      projectLink.addEventListener("click", () => {
+        runContext(newProjectName);
+      });
+    });
   });
-
-  // When user clicks Add
-  addButton.addEventListener("click", () => {
-    const newProjectName = newProjectInput.value;
-    const nav = document.querySelector("aside > nav");
-
-    // Check if there is text in the input field and the project name is valid
-    if (!newProjectName) return;
-    if (Context.isAContext(newProjectName) || newProjectName === "default") {
-      aside.classList.add("invalid");
-      return;
-    }
-
-    // Reset values
-    newProjectInput.value = "";
-    aside.classList.remove("invalid");
-
-    // Remove menu and initialize project
-    closeNewProjectPrompt();
-    runContext(newProjectName);
-
-    // Add project button to nav
-    const projectLink = document.createElement("button");
-    projectLink.textContent = newProjectName;
-    nav.append(projectLink);
-  });
-});
+})();
 
 runContext("default");
