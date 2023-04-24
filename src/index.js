@@ -19,6 +19,9 @@ const StateManager = (() => {
       const thisTask = pool.find((t) => t.task === taskName);
       thisTask[property] = value;
     },
+    getContext() {
+      return currentContext;
+    },
     initializeProject(name) {
       projects[name] = [];
       currentContext = name;
@@ -74,6 +77,25 @@ addTaskButton.addEventListener("click", () => {
   renderTaskItem(taskObject);
 });
 
+const clearTaskList = () => {
+  while (taskList.firstChild) {
+    taskList.removeChild(taskList.firstChild);
+  }
+};
+
+// const showContext = (context) => {
+//   const tasks =
+//     context === "default"
+//       ? StateManager.getAllTasks()
+//       : StateManager.getTasksFrom(context);
+
+//   // Remove all tasks being shown
+//   clearTaskList();
+
+//   // Render every task of the context (or all by default)
+//   tasks.forEach((task) => renderTaskItem(task));
+// };
+
 // When user clicks + Add Project
 addProjectButton.addEventListener("click", () => {
   const aside = document.querySelector("aside");
@@ -116,6 +138,7 @@ addProjectButton.addEventListener("click", () => {
   addButton.addEventListener("click", () => {
     const newProjectName = newProjectInput.value;
     const nav = document.querySelector("aside > nav");
+
     // Check if there is text in the input field and the project name is valid
     if (!newProjectName) return;
     if (
@@ -126,11 +149,15 @@ addProjectButton.addEventListener("click", () => {
       return;
     }
 
+    // Reset values
     newProjectInput.value = "";
     aside.classList.remove("invalid");
 
-    // If so, remove menu and initialize project
+    // Remove menu and initialize project
     removeContextMenu();
     StateManager.initializeProject(newProjectName);
+
+    // Clean context
+    clearTaskList();
   });
 });
