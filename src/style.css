@@ -132,6 +132,10 @@ table {
   display: none;
 }
 
-input:not(#new-task) {
+input[type="text"]:not(#new-task) {
   display: block;
+}
+
+.invalid::after {
+  content: "Invalid name";
 }

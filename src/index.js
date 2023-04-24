@@ -1,8 +1,9 @@
 import "./style.css";
 import * as lg from "./Logic";
 
-const Inbox = (() => {
+const StateManager = (() => {
   const projects = { default: [] };
+  let currentContext = "default";
   return {
     getTasksFrom(project) {
       return projects[project];
@@ -10,13 +11,20 @@ const Inbox = (() => {
     getAllTasks() {
       return [].concat(...Object.values(projects));
     },
-    addTaskToProject(task, project) {
-      projects[project].push(task);
+    addTask(task) {
+      projects[currentContext].push(task);
     },
-    sePropertyOf(property, value, taskName, project = false) {
+    setPropertyOf(property, value, taskName, project = false) {
       const pool = project ? this.getTasksFrom(project) : this.getAllTasks();
       const thisTask = pool.find((t) => t.task === taskName);
       thisTask[property] = value;
+    },
+    initializeProject(name) {
+      projects[name] = [];
+      currentContext = name;
+    },
+    isAProject(name) {
+      return name in projects;
     },
   };
 })();
@@ -36,8 +44,12 @@ const renderTaskItem = (taskObject) => {
   completedCheckbox.setAttribute("id", "completed");
   // When user clicks the text or checkbox of a task
   taskLabel.addEventListener("click", () => {
-    // Toggle checked state of the task in the Inbox module
-    Inbox.sePropertyOf("completed", completedCheckbox.checked, taskObject.task);
+    // Toggle checked state of the task
+    StateManager.setPropertyOf(
+      "completed",
+      completedCheckbox.checked,
+      taskObject.task
+    );
   });
   const taskText = document.createTextNode(taskObject.task);
   taskItem.classList.add(taskObject.completed, taskObject.dueDate);
@@ -50,12 +62,13 @@ const renderTaskItem = (taskObject) => {
 
 // When user clicks + Add Task in any context
 addTaskButton.addEventListener("click", () => {
+  const newTaskName = newTaskInput.value;
   // Check if there is text in the input field
-  if (!newTaskInput.value) return;
+  if (!newTaskName) return;
 
-  // If so, create a task object and add it to default inbox list
-  const taskObject = lg.createTaskObject(newTaskInput.value);
-  Inbox.addTaskToProject(taskObject, "default");
+  // If so, create a task object and add it to project list
+  const taskObject = lg.createTaskObject(newTaskName);
+  StateManager.addTask(taskObject);
   newTaskInput.value = "";
 
   renderTaskItem(taskObject);
@@ -70,12 +83,12 @@ addProjectButton.addEventListener("click", () => {
 
   const label = document.createElement("label");
   const labelText = document.createTextNode("Name your project");
-  const textInput = document.createElement("input");
-  textInput.setAttribute("type", "text");
-  textInput.setAttribute("placeholder", "My Project");
+  const newProjectInput = document.createElement("input");
+  newProjectInput.setAttribute("type", "text");
+  newProjectInput.setAttribute("placeholder", "My Project");
 
   label.append(labelText);
-  label.append(textInput);
+  label.append(newProjectInput);
 
   const addButton = document.createElement("button");
   addButton.textContent = "Add";
@@ -97,5 +110,27 @@ addProjectButton.addEventListener("click", () => {
   // When user clicks Cancel
   cancelButton.addEventListener("click", () => {
     removeContextMenu();
+    aside.classList.remove("invalid");
+  });
+  // When user clicks Add
+  addButton.addEventListener("click", () => {
+    const newProjectName = newProjectInput.value;
+    const nav = document.querySelector("aside > nav");
+    // Check if there is text in the input field and the project name is valid
+    if (!newProjectName) return;
+    if (
+      StateManager.isAProject(newProjectName) ||
+      newProjectName === "default"
+    ) {
+      aside.classList.add("invalid");
+      return;
+    }
+
+    newProjectInput.value = "";
+    aside.classList.remove("invalid");
+
+    // If so, remove menu and initialize project
+    removeContextMenu();
+    StateManager.initializeProject(newProjectName);
   });
 });
