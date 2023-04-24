@@ -46,18 +46,25 @@ const runContext = (context) => {
     completedCheckbox.type = "checkbox";
     completedCheckbox.setAttribute("id", "completed");
 
+    const taskText = document.createTextNode(taskObject.name);
+    taskItem.classList.add("false", taskObject.dueDate);
+
     // Control the logic for Completed task
     taskLabel.addEventListener("click", () => {
+      // Change object
       Context.setPropertyOf(
         "completed",
         completedCheckbox.checked,
         taskObject.name,
         context
       );
+      // Change element class
+      if (taskItem.classList.contains("false")) {
+        taskItem.classList.replace("false", "true");
+      } else {
+        taskItem.classList.replace("true", "false");
+      }
     });
-
-    const taskText = document.createTextNode(taskObject.name);
-    taskItem.classList.add(taskObject.completed, taskObject.dueDate);
 
     taskLabel.append(completedCheckbox);
     taskLabel.append(taskText);
