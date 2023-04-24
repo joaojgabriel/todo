@@ -13,6 +13,7 @@ const Context = (() => {
       if (context === "default") {
         return [].concat(...Object.values(contexts));
       }
+
       return contexts[context];
     },
     addTaskTo(task, context) {
@@ -34,6 +35,7 @@ const runContext = (context) => {
   const addTaskButton = document.querySelector("button#add-task");
   const newTaskInput = document.querySelector("input#new-task");
   const taskList = document.querySelector("ul#task-list");
+  const tasks = Context.getTasksFrom(context);
 
   const renderTaskItem = (taskObject) => {
     // Add a list item with a checkbox and a title for the task
@@ -64,7 +66,7 @@ const runContext = (context) => {
   };
 
   // When user clicks + Add Task in this context
-  addTaskButton.addEventListener("click", () => {
+  addTaskButton.onclick = function addTask() {
     const newTaskName = newTaskInput.value;
 
     // Check if there is text in the input field
@@ -77,9 +79,7 @@ const runContext = (context) => {
     newTaskInput.value = "";
 
     renderTaskItem(taskObject);
-  });
-
-  const tasks = Context.getTasksFrom(context);
+  };
 
   // Remove all tasks being shown
   while (taskList.firstChild) {
@@ -137,10 +137,7 @@ addProjectButton.addEventListener("click", () => {
 
     // Check if there is text in the input field and the project name is valid
     if (!newProjectName) return;
-    if (
-      Context.isAContext(newProjectName) ||
-      newProjectName === "default"
-    ) {
+    if (Context.isAContext(newProjectName) || newProjectName === "default") {
       aside.classList.add("invalid");
       return;
     }
