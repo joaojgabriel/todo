@@ -17,8 +17,17 @@ const Context = (() => {
       return contexts[context];
     },
     addTaskTo(task, context) {
-      console.log(context);
       contexts[context].push(task);
+    },
+    deleteTaskFrom(taskName, context) {
+      const arr = contexts[context];
+      const { length } = arr;
+      for (let i = 0; i < length; i += 1) {
+        if (arr[i].name === taskName) {
+          contexts[context].splice(i, 1);
+          return;
+        }
+      }
     },
     setPropertyOf(property, value, taskName, context) {
       const pool = this.getTasksFrom(context);
@@ -66,20 +75,30 @@ const runContext = (context) => {
       }
     });
 
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.addEventListener("click", () => {
+      // Delete object
+      Context.deleteTaskFrom(taskObject.name, context);
+      // Delete element
+      taskItem.remove();
+    });
+
     taskLabel.append(completedCheckbox);
     taskLabel.append(taskText);
     taskItem.append(taskLabel);
+    taskItem.append(deleteButton);
     taskList.append(taskItem);
   };
 
-  // When user clicks + Add Task in this context
+  // When user clicks + Add Task
   addTaskButton.onclick = function addTask() {
     const newTaskName = newTaskInput.value;
 
     // Check if there is text in the input field
     if (!newTaskName) return;
 
-    // If so, create a task object and add it to project list
+    // If so, create a task object and add it to context list
     const taskObject = { name: newTaskName, dueDate: null, completed: false };
 
     Context.addTaskTo(taskObject, context);
@@ -97,7 +116,7 @@ const runContext = (context) => {
   tasks.forEach((task) => renderTaskItem(task));
 };
 
-// When user clicks Inbox
+// When user clicks Inbox, show all tasks
 (() => {
   const inboxButton = document.querySelector("button#inbox");
   inboxButton.addEventListener("click", () => {
@@ -140,7 +159,7 @@ const runContext = (context) => {
       addProjectButton.classList.remove("hidden");
     };
 
-    // When user clicks Cancel
+    // When user clicks Cancel, close menu
     cancelButton.addEventListener("click", () => {
       closeNewProjectPrompt();
       aside.classList.remove("invalid");
@@ -162,7 +181,7 @@ const runContext = (context) => {
       newProjectInput.value = "";
       aside.classList.remove("invalid");
 
-      // Remove menu and initialize project
+      // Close menu and run context
       closeNewProjectPrompt();
       runContext(newProjectName);
 
@@ -170,7 +189,7 @@ const runContext = (context) => {
       const projectLink = document.createElement("button");
       projectLink.textContent = newProjectName;
       nav.append(projectLink);
-
+      // Change context when clicking button
       projectLink.addEventListener("click", () => {
         runContext(newProjectName);
       });
