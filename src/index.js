@@ -8,7 +8,10 @@ const StateManager = (() => {
       if (!contexts[context]) {
         contexts[context] = [];
       }
+      // Return false if context is empty
+      if (contexts[context] === []) return false;
 
+      // Return tasks from all contexts if we're in default
       if (context === "default") {
         return [].concat(...Object.values(contexts));
       }
@@ -32,13 +35,6 @@ const runContext = (context) => {
   const addTaskButton = document.querySelector("button#add-task");
   const newTaskInput = document.querySelector("input#new-task");
   const taskList = document.querySelector("ul#task-list");
-
-  const tasks = StateManager.getTasksFrom(context);
-
-  // Remove all tasks being shown
-  while (taskList.firstChild) {
-    taskList.removeChild(taskList.firstChild);
-  }
 
   const renderTaskItem = (taskObject) => {
     // Add a list item with a checkbox and a title for the task
@@ -68,9 +64,6 @@ const runContext = (context) => {
     taskList.append(taskItem);
   };
 
-  // Render every task of the context (or all by default)
-  tasks.forEach((task) => renderTaskItem(task));
-
   // When user clicks + Add Task in this context
   addTaskButton.addEventListener("click", () => {
     const newTaskName = newTaskInput.value;
@@ -86,6 +79,18 @@ const runContext = (context) => {
 
     renderTaskItem(taskObject);
   });
+
+  const tasks = StateManager.getTasksFrom(context);
+
+  if (!tasks) return;
+
+  // Remove all tasks being shown
+  while (taskList.firstChild) {
+    taskList.removeChild(taskList.firstChild);
+  }
+
+  // Render all context appropriate tasks
+  tasks.forEach((task) => renderTaskItem(task));
 };
 
 const addProjectButton = document.querySelector("button#add-project");
