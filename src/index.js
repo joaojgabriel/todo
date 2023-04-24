@@ -1,101 +1,94 @@
 import "./style.css";
-import * as lg from "./Logic";
 
 const StateManager = (() => {
-  const projects = { default: [] };
-  let currentContext = "default";
+  const contexts = {};
   return {
-    getTasksFrom(project) {
-      return projects[project];
+    getTasksFrom(context) {
+      // Initialize context
+      if (!contexts[context]) {
+        contexts[context] = [];
+      }
+
+      if (context === "default") {
+        return [].concat(...Object.values(contexts));
+      }
+      return contexts[context];
     },
-    getAllTasks() {
-      return [].concat(...Object.values(projects));
+    addTaskToContext(task, context) {
+      contexts[context].push(task);
     },
-    addTask(task) {
-      projects[currentContext].push(task);
-    },
-    setPropertyOf(property, value, taskName, project = false) {
-      const pool = project ? this.getTasksFrom(project) : this.getAllTasks();
-      const thisTask = pool.find((t) => t.task === taskName);
+    setPropertyOf(property, value, taskName, context) {
+      const pool = this.getTasksFrom(context);
+      const thisTask = pool.find((t) => t.name === taskName);
       thisTask[property] = value;
     },
-    getContext() {
-      return currentContext;
-    },
-    initializeProject(name) {
-      projects[name] = [];
-      currentContext = name;
-    },
-    isAProject(name) {
-      return name in projects;
+    isAContext(name) {
+      return name in contexts;
     },
   };
 })();
 
-const addTaskButton = document.querySelector("button#add-task");
-const newTaskInput = document.querySelector("input#new-task");
-const taskList = document.querySelector("ul#task-list");
-const addProjectButton = document.querySelector("button#add-project");
+const runContext = (context) => {
+  const addTaskButton = document.querySelector("button#add-task");
+  const newTaskInput = document.querySelector("input#new-task");
+  const taskList = document.querySelector("ul#task-list");
 
-const renderTaskItem = (taskObject) => {
-  // Append a list item with a checkbox and a title for the task
-  const taskItem = document.createElement("li");
-  const taskLabel = document.createElement("label");
-  taskLabel.setAttribute("for", "completed");
-  const completedCheckbox = document.createElement("input");
-  completedCheckbox.type = "checkbox";
-  completedCheckbox.setAttribute("id", "completed");
-  // When user clicks the text or checkbox of a task
-  taskLabel.addEventListener("click", () => {
-    // Toggle checked state of the task
-    StateManager.setPropertyOf(
-      "completed",
-      completedCheckbox.checked,
-      taskObject.task
-    );
-  });
-  const taskText = document.createTextNode(taskObject.task);
-  taskItem.classList.add(taskObject.completed, taskObject.dueDate);
+  const tasks = StateManager.getTasksFrom(context);
 
-  taskLabel.append(completedCheckbox);
-  taskLabel.append(taskText);
-  taskItem.append(taskLabel);
-  taskList.append(taskItem);
-};
-
-// When user clicks + Add Task in any context
-addTaskButton.addEventListener("click", () => {
-  const newTaskName = newTaskInput.value;
-  // Check if there is text in the input field
-  if (!newTaskName) return;
-
-  // If so, create a task object and add it to project list
-  const taskObject = lg.createTaskObject(newTaskName);
-  StateManager.addTask(taskObject);
-  newTaskInput.value = "";
-
-  renderTaskItem(taskObject);
-});
-
-const clearTaskList = () => {
+  // Remove all tasks being shown
   while (taskList.firstChild) {
     taskList.removeChild(taskList.firstChild);
   }
+
+  const renderTaskItem = (taskObject) => {
+    // Add a list item with a checkbox and a title for the task
+    const taskItem = document.createElement("li");
+    const taskLabel = document.createElement("label");
+    taskLabel.setAttribute("for", "completed");
+    const completedCheckbox = document.createElement("input");
+    completedCheckbox.type = "checkbox";
+    completedCheckbox.setAttribute("id", "completed");
+
+    // Control the logic for Completed task
+    taskLabel.addEventListener("click", () => {
+      StateManager.setPropertyOf(
+        "completed",
+        completedCheckbox.checked,
+        taskObject.name,
+        context
+      );
+    });
+
+    const taskText = document.createTextNode(taskObject.name);
+    taskItem.classList.add(taskObject.completed, taskObject.dueDate);
+
+    taskLabel.append(completedCheckbox);
+    taskLabel.append(taskText);
+    taskItem.append(taskLabel);
+    taskList.append(taskItem);
+  };
+
+  // Render every task of the context (or all by default)
+  tasks.forEach((task) => renderTaskItem(task));
+
+  // When user clicks + Add Task in this context
+  addTaskButton.addEventListener("click", () => {
+    const newTaskName = newTaskInput.value;
+
+    // Check if there is text in the input field
+    if (!newTaskName) return;
+
+    // If so, create a task object and add it to project list
+    const taskObject = { name: newTaskName, dueDate: null, completed: false };
+
+    StateManager.addTaskToContext(taskObject, context);
+    newTaskInput.value = "";
+
+    renderTaskItem(taskObject);
+  });
 };
 
-// const showContext = (context) => {
-//   const tasks =
-//     context === "default"
-//       ? StateManager.getAllTasks()
-//       : StateManager.getTasksFrom(context);
-
-//   // Remove all tasks being shown
-//   clearTaskList();
-
-//   // Render every task of the context (or all by default)
-//   tasks.forEach((task) => renderTaskItem(task));
-// };
-
+const addProjectButton = document.querySelector("button#add-project");
 // When user clicks + Add Project
 addProjectButton.addEventListener("click", () => {
   const aside = document.querySelector("aside");
@@ -121,7 +114,7 @@ addProjectButton.addEventListener("click", () => {
   aside.append(addButton);
   aside.append(cancelButton);
 
-  const removeContextMenu = () => {
+  const closeNewProjectPrompt = () => {
     label.remove();
     addButton.remove();
     cancelButton.remove();
@@ -131,9 +124,10 @@ addProjectButton.addEventListener("click", () => {
 
   // When user clicks Cancel
   cancelButton.addEventListener("click", () => {
-    removeContextMenu();
+    closeNewProjectPrompt();
     aside.classList.remove("invalid");
   });
+
   // When user clicks Add
   addButton.addEventListener("click", () => {
     const newProjectName = newProjectInput.value;
@@ -142,7 +136,7 @@ addProjectButton.addEventListener("click", () => {
     // Check if there is text in the input field and the project name is valid
     if (!newProjectName) return;
     if (
-      StateManager.isAProject(newProjectName) ||
+      StateManager.isAContext(newProjectName) ||
       newProjectName === "default"
     ) {
       aside.classList.add("invalid");
@@ -154,10 +148,14 @@ addProjectButton.addEventListener("click", () => {
     aside.classList.remove("invalid");
 
     // Remove menu and initialize project
-    removeContextMenu();
-    StateManager.initializeProject(newProjectName);
+    closeNewProjectPrompt();
+    runContext(newProjectName);
 
-    // Clean context
-    clearTaskList();
+    // Add project button to nav
+    const projectLink = document.createElement("button");
+    projectLink.textContent = newProjectName;
+    nav.append(projectLink);
   });
 });
+
+runContext("default");
