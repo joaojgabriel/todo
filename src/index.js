@@ -8,8 +8,6 @@ const Context = (() => {
       if (!contexts[context]) {
         contexts[context] = [];
       }
-      // Return false if context is empty
-      if (contexts[context] === []) return false;
 
       // Return tasks from all contexts if we're in default
       if (context === "default") {
@@ -18,6 +16,7 @@ const Context = (() => {
       return contexts[context];
     },
     addTaskTo(task, context) {
+      console.log(context)
       contexts[context].push(task);
     },
     setPropertyOf(property, value, taskName, context) {
@@ -81,8 +80,6 @@ const runContext = (context) => {
   });
 
   const tasks = Context.getTasksFrom(context);
-
-  if (!tasks) return;
 
   // Remove all tasks being shown
   while (taskList.firstChild) {
