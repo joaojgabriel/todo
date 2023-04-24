@@ -90,6 +90,14 @@ const runContext = (context) => {
   tasks.forEach((task) => renderTaskItem(task));
 };
 
+// When user clicks Inbox
+(() => {
+  const inboxButton = document.querySelector("button#inbox");
+  inboxButton.addEventListener("click", () => {
+    runContext("default");
+  });
+})();
+
 // When user clicks + Add Project
 (() => {
   const addProjectButton = document.querySelector("button#add-project");
