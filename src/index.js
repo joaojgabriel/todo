@@ -19,6 +19,9 @@ const Context = (() => {
     addTaskTo(task, context) {
       contexts[context].push(task);
     },
+    getAllContexts() {
+      return [...Object.keys(contexts)];
+    },
     deleteTaskFrom(taskName, context) {
       function iterate(propName) {
         const arr = contexts[propName];
@@ -32,7 +35,7 @@ const Context = (() => {
         return false;
       }
       if (context === "default") {
-        const allContexts = [...Object.keys(contexts)];
+        const allContexts = this.getAllContexts();
         for (let i = 0; i < allContexts.length; i += 1) {
           if (iterate(allContexts[i])) return;
         }
@@ -99,7 +102,49 @@ const runContext = (context) => {
     // Get the edit button element and add an event listener
     const editButton = taskItem.querySelector("button:nth-of-type(1)");
     editButton.addEventListener("click", () => {
-      // Handle edit functionality
+      // Create a string of HTML markup for the task item
+      const editMenuHTML = `
+        <form class="edit">
+          <label for="task">
+            Task
+            <input type="text" id="task"/>
+          </label>
+          <label for="date">
+            Date
+            <input type="date" id="date"/>
+          </label>
+          <label for="project">
+            Project
+            <select name="" id="project"></select>
+          </label>
+          <input type="submit" value="Confirm">
+        </form>
+      `;
+
+      // Create a container element and set its innerHTML property
+      const placeholder = document.createElement("div");
+      placeholder.innerHTML = editMenuHTML;
+
+      // Get the edit menu element from the container
+      const editMenu = placeholder.firstElementChild;
+
+      // Insert edit menu element after the task being edited
+      taskItem.insertAdjacentElement("afterend", editMenu);
+
+      // Give inputs initial values
+      const editTaskInput = document.querySelector(".edit input#task");
+      editTaskInput.value = taskObject.name;
+      const editDateInput = document.querySelector(".edit input#date");
+      editDateInput.value = taskObject.date;
+      // const selectProject = document.querySelector(".edit input#project");
+      // const addProjectOption = (thisProject) => {
+      //   const optionName = thisProject === "default" ? "None" : thisProject;
+      //   const optionInnerHTML = `
+      //     <option value="${optionName}">${optionName}</option>
+      //   `;
+      //   selectProject.append(optionName);
+      // };
+      // Context.getAllContexts().forEach();
     });
 
     // Get the delete button element and add an event listener
