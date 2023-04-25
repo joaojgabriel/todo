@@ -47,18 +47,28 @@ const runContext = (context) => {
   const tasks = Context.getTasksFrom(context);
 
   const renderTaskItem = (taskObject) => {
-    // Add a list item with a checkbox and a title for the task
-    const taskItem = document.createElement("li");
-    const taskLabel = document.createElement("label");
-    taskLabel.setAttribute("for", "completed");
-    const completedCheckbox = document.createElement("input");
-    completedCheckbox.type = "checkbox";
-    completedCheckbox.setAttribute("id", "completed");
+    // Create a string of HTML markup for the task item
+    const taskItemHTML = `
+      <li class="false ${taskObject.dueDate}">
+        <label for="completed">
+          <input type="checkbox" id="completed">
+          ${taskObject.name}
+        </label>
+        <button>Edit</button>
+        <button>Delete</button>
+      </li>
+    `;
 
-    const taskText = document.createTextNode(taskObject.name);
-    taskItem.classList.add("false", taskObject.dueDate);
+    // Create a container element and set its innerHTML property
+    const container = document.createElement("div");
+    container.innerHTML = taskItemHTML;
 
-    // Control the logic for Completed task
+    // Get the task item element from the container
+    const taskItem = container.firstElementChild;
+
+    // Get the completed checkbox element and add an event listener
+    const completedCheckbox = taskItem.querySelector("#completed");
+    const taskLabel = taskItem.querySelector("label");
     taskLabel.addEventListener("click", () => {
       // Change object
       Context.setPropertyOf(
@@ -75,8 +85,14 @@ const runContext = (context) => {
       }
     });
 
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
+    // Get the edit button element and add an event listener
+    const editButton = taskItem.querySelector("button:nth-of-type(1)");
+    editButton.addEventListener("click", () => {
+      // Handle edit functionality
+    });
+
+    // Get the delete button element and add an event listener
+    const deleteButton = taskItem.querySelector("button:nth-of-type(2)");
     deleteButton.addEventListener("click", () => {
       // Delete object
       Context.deleteTaskFrom(taskObject.name, context);
@@ -84,11 +100,8 @@ const runContext = (context) => {
       taskItem.remove();
     });
 
-    taskLabel.append(completedCheckbox);
-    taskLabel.append(taskText);
-    taskItem.append(taskLabel);
-    taskItem.append(deleteButton);
-    taskList.append(taskItem);
+    // Add the task item element to the task list
+    taskList.appendChild(taskItem);
   };
 
   // When user clicks + Add Task
