@@ -146,29 +146,21 @@ const runContext = (context) => {
     // Hide Button and create a small context menu for naming the project
     addProjectButton.classList.add("hidden");
 
-    const label = document.createElement("label");
-    const labelText = document.createTextNode("Name your project");
-    const newProjectInput = document.createElement("input");
-    newProjectInput.setAttribute("type", "text");
-    newProjectInput.setAttribute("placeholder", "My Project");
+    const container = document.createElement("div");
 
-    label.append(labelText);
-    label.append(newProjectInput);
+    container.innerHTML = `
+      <label for="new-project" class="new-project">
+        Name your project
+      </label>
+      <input id="new-project" type="text" placeholder="My Project" class="new-project">
+      <button class="new-project">Add</button>
+      <button class="new-project">Cancel</button>
+    `;
 
-    const addButton = document.createElement("button");
-    addButton.textContent = "Add";
-    const cancelButton = document.createElement("button");
-    cancelButton.textContent = "Cancel";
-
-    aside.append(label);
-    aside.append(addButton);
-    aside.append(cancelButton);
+    const [label, input, addButton, cancelButton] = container.children;
 
     const closeNewProjectPrompt = () => {
-      label.remove();
-      addButton.remove();
-      cancelButton.remove();
-
+      [...document.querySelectorAll('.new-project')].forEach((element) => element.remove());
       addProjectButton.classList.remove("hidden");
     };
 
@@ -180,7 +172,7 @@ const runContext = (context) => {
 
     // When user clicks Add
     addButton.addEventListener("click", () => {
-      const newProjectName = newProjectInput.value;
+      const newProjectName = input.value;
       const nav = document.querySelector("aside > nav");
 
       // Check if there is text in the input field and the project name is valid
@@ -191,7 +183,7 @@ const runContext = (context) => {
       }
 
       // Reset values
-      newProjectInput.value = "";
+      input.value = "";
       aside.classList.remove("invalid");
 
       // Close menu and run context
@@ -202,11 +194,14 @@ const runContext = (context) => {
       const projectLink = document.createElement("button");
       projectLink.textContent = newProjectName;
       nav.append(projectLink);
+
       // Change context when clicking button
       projectLink.addEventListener("click", () => {
         runContext(newProjectName);
       });
     });
+
+    aside.append(...container.children);
   });
 })();
 
