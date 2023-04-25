@@ -20,13 +20,24 @@ const Context = (() => {
       contexts[context].push(task);
     },
     deleteTaskFrom(taskName, context) {
-      const arr = contexts[context];
-      const { length } = arr;
-      for (let i = 0; i < length; i += 1) {
-        if (arr[i].name === taskName) {
-          contexts[context].splice(i, 1);
-          return;
+      function iterate(propName) {
+        const arr = contexts[propName];
+        const { length } = arr;
+        for (let j = 0; j < length; j += 1) {
+          if (arr[j].name === taskName) {
+            contexts[propName].splice(j, 1);
+            return true;
+          }
         }
+        return false;
+      }
+      if (context === "default") {
+        const allContexts = [...Object.keys(contexts)];
+        for (let i = 0; i < allContexts.length; i += 1) {
+          if (iterate(allContexts[i])) return;
+        }
+      } else {
+        iterate(context);
       }
     },
     setPropertyOf(property, value, taskName, context) {
@@ -160,7 +171,9 @@ const runContext = (context) => {
     const [label, input, addButton, cancelButton] = container.children;
 
     const closeNewProjectPrompt = () => {
-      [...document.querySelectorAll('.new-project')].forEach((element) => element.remove());
+      [...document.querySelectorAll(".new-project")].forEach((element) =>
+        element.remove()
+      );
       addProjectButton.classList.remove("hidden");
     };
 
