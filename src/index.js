@@ -162,7 +162,7 @@ const runContext = (context) => {
     const deleteButton = taskItem.querySelector("button:nth-of-type(2)");
     deleteButton.addEventListener("click", () => {
       // Delete object
-      Context.deleteTask(taskObject.name, context);
+      Context.deleteTask(taskObject);
       // Delete element
       taskItem.remove();
     });
