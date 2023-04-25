@@ -16,36 +16,36 @@ const Context = (() => {
 
       return contexts[context];
     },
-    addTaskTo(task, context) {
-      contexts[context].push(task);
+    addTask(task) {
+      contexts[task.project].push(task);
     },
     getAllContexts() {
       return [...Object.keys(contexts)];
     },
-    deleteTaskFrom(taskName, context) {
+    deleteTask({ name, project }) {
       function iterate(propName) {
         const arr = contexts[propName];
         const { length } = arr;
         for (let j = 0; j < length; j += 1) {
-          if (arr[j].name === taskName) {
+          if (arr[j].name === name) {
             contexts[propName].splice(j, 1);
             return true;
           }
         }
         return false;
       }
-      if (context === "default") {
+      if (project === "default") {
         const allContexts = this.getAllContexts();
         for (let i = 0; i < allContexts.length; i += 1) {
           if (iterate(allContexts[i])) return;
         }
       } else {
-        iterate(context);
+        iterate(project);
       }
     },
-    setPropertyOf(property, value, taskName, context) {
-      const pool = this.getTasksFrom(context);
-      const thisTask = pool.find((t) => t.name === taskName);
+    setPropertyOf(property, value, { name, project }) {
+      const pool = this.getTasksFrom(project);
+      const thisTask = pool.find((t) => t.name === name);
       thisTask[property] = value;
     },
     isAContext(name) {
@@ -85,12 +85,7 @@ const runContext = (context) => {
     const taskLabel = taskItem.querySelector("label");
     taskLabel.addEventListener("click", () => {
       // Change object
-      Context.setPropertyOf(
-        "completed",
-        completedCheckbox.checked,
-        taskObject.name,
-        context
-      );
+      Context.setPropertyOf("completed", completedCheckbox.checked, taskObject);
       // Change element class
       if (taskItem.classList.contains("false")) {
         taskItem.classList.replace("false", "true");
@@ -136,22 +131,38 @@ const runContext = (context) => {
       editTaskInput.value = taskObject.name;
       const editDateInput = document.querySelector(".edit input#date");
       editDateInput.value = taskObject.date;
-      // const selectProject = document.querySelector(".edit input#project");
+      // const selectProject = document.querySelector(".edit select#project");
       // const addProjectOption = (thisProject) => {
       //   const optionName = thisProject === "default" ? "None" : thisProject;
       //   const optionInnerHTML = `
       //     <option value="${optionName}">${optionName}</option>
       //   `;
-      //   selectProject.append(optionName);
+
+      //   // Create a container element and set innerHTML
+      //   const optionPlaceholder = document.createElement("div");
+      //   optionPlaceholder.innerHTML = optionInnerHTML;
+
+      //   // Get the option placeholder element from the container
+      //   const option = optionPlaceholder.firstElementChild;
+
+      //   selectProject.append(option);
       // };
-      // Context.getAllContexts().forEach();
+
+      // // Set the task's context as the first option
+      // addProjectOption(taskObject.project);
+
+      // // Add all remaining options
+      // Context.getAllContexts().forEach((project) => {
+      //   if (project === context) return;
+      //   addProjectOption(project);
+      // });
     });
 
     // Get the delete button element and add an event listener
     const deleteButton = taskItem.querySelector("button:nth-of-type(2)");
     deleteButton.addEventListener("click", () => {
       // Delete object
-      Context.deleteTaskFrom(taskObject.name, context);
+      Context.deleteTask(taskObject.name, context);
       // Delete element
       taskItem.remove();
     });
@@ -168,9 +179,14 @@ const runContext = (context) => {
     if (!newTaskName) return;
 
     // If so, create a task object and add it to context list
-    const taskObject = { name: newTaskName, dueDate: null, completed: false };
+    const taskObject = {
+      name: newTaskName,
+      dueDate: null,
+      completed: false,
+      project: context,
+    };
 
-    Context.addTaskTo(taskObject, context);
+    Context.addTask(taskObject, context);
     newTaskInput.value = "";
 
     renderTaskItem(taskObject);
