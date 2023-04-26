@@ -10,7 +10,17 @@ const Context = (() => {
       return current;
     },
     change(context) {
+      // Changes context and returns appropriate task list
       current = context;
+
+      if (!map[current]) {
+        map[current] = [];
+      }
+
+      if (current === "default") {
+        return Object.values(map[context]).concat();
+      }
+      return map[current];
     },
     indexTask(taskObject) {
       count += 1;
@@ -50,23 +60,12 @@ const nav = document.querySelector("nav");
 const inboxButton = document.querySelector("button#inbox");
 const addProjectButton = document.querySelector("button#add-project");
 
-plusButton.addEventListener("click", () => {
-  const name = newTaskInput.value || null;
-  if (!name) return;
-  const dueDate = dueDateInput.value;
-  const context = Context.getCurrent();
-
-  const indexedTask = Context.indexTask({
-    name,
-    dueDate,
-    context,
-    completed: false,
-  });
-  Context.addTask(indexedTask);
-
+const renderTask = (indexedTask) => {
   const newTaskElement = lg.createTaskElement(indexedTask);
 
-  const newTaskCheckbox = newTaskElement.querySelector(`#${name}-checkbox`);
+  const newTaskCheckbox = newTaskElement.querySelector(
+    'input[type="checkbox"]'
+  );
   const newTaskEditButton = newTaskElement.querySelector(".edit");
   const newTaskDeleteButton = newTaskElement.querySelector(".delete");
 
@@ -83,8 +82,37 @@ plusButton.addEventListener("click", () => {
   });
 
   taskList.append(newTaskElement);
+};
+
+const changeContext = (context) => {
+  while (taskList.firstChild) {
+    taskList.removeChild(taskList.firstChild);
+  }
+
+  const tasks = Context.change(context);
+  if (!tasks) return;
+  tasks.forEach((task) => renderTask(task));
+};
+
+plusButton.addEventListener("click", () => {
+  const name = newTaskInput.value || null;
+  if (!name) return;
+  const dueDate = dueDateInput.value;
+  const context = Context.getCurrent();
+
+  const indexedTask = Context.indexTask({
+    name,
+    dueDate,
+    context,
+    completed: false,
+  });
+  Context.addTask(indexedTask);
+
+  renderTask(indexedTask);
 });
 
-inboxButton.addEventListener("click", () => {});
+inboxButton.addEventListener("click", () => {
+  changeContext("default");
+});
 
 addProjectButton.addEventListener("click", () => {});
