@@ -20,6 +20,14 @@ const Context = (() => {
     addTask(indexedTask) {
       map[current].push(indexedTask);
     },
+    deleteTask({ context, index }) {
+      const { length } = map[context];
+      for (let i = 0; i < length; i += 1) {
+        if (map[context][i].index === index) {
+          map[context].splice(i, 1);
+        }
+      }
+    },
     modifyTask({ context, index }, changeObject) {
       map[context].forEach((task) => {
         if (task.index === index) {
@@ -55,14 +63,23 @@ plusButton.addEventListener("click", () => {
     completed: false,
   });
   Context.addTask(indexedTask);
+
   const newTaskElement = lg.createTaskElement(indexedTask);
 
   const newTaskCheckbox = newTaskElement.querySelector(`#${name}-checkbox`);
-  // const newTaskEditButton = newTaskElement.querySelector('.edit')
-  // const newTask
+  const newTaskEditButton = newTaskElement.querySelector(".edit");
+  const newTaskDeleteButton = newTaskElement.querySelector(".delete");
+
   newTaskCheckbox.addEventListener("change", () => {
     newTaskElement.classList.toggle("completed");
     Context.modifyTask(indexedTask, { completed: newTaskCheckbox.checked });
+  });
+
+  newTaskEditButton.addEventListener("click", () => {});
+
+  newTaskDeleteButton.addEventListener("click", () => {
+    newTaskElement.remove();
+    Context.deleteTask(indexedTask);
   });
 
   taskList.append(newTaskElement);
