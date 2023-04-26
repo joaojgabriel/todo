@@ -143,6 +143,20 @@ addProjectButton.addEventListener("click", () => {
   const addButton = projectMenu.querySelector("#add");
   const cancelButton = projectMenu.querySelector("#cancel");
 
-  addButton.addEventListener("click", () => {});
+  addButton.addEventListener("click", () => {
+    const project = projectInput.value || null;
+    if (!project) {
+      projectInput.focus();
+      return;
+    }
+    changeContext(project);
+
+    const projectButton = lg.createProjectButton(project);
+    projectButton.addEventListener("click", () => {
+      changeContext(project);
+    });
+
+    nav.append(projectButton);
+  });
   cancelButton.addEventListener("click", toggleProjectMenu);
 });
