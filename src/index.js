@@ -60,6 +60,9 @@ const nav = document.querySelector("nav");
 const inboxButton = document.querySelector("button#inbox");
 const addProjectButton = document.querySelector("button#add-project");
 
+const projectMenu = document.querySelector("#project-menu");
+const projectInput = document.querySelector("input#new-project");
+
 window.onload = newTaskInput.focus();
 
 const renderTask = (indexedTask) => {
@@ -86,13 +89,29 @@ const renderTask = (indexedTask) => {
   taskList.append(newTaskElement);
 };
 
+const toggleProjectMenu = (allowOpen = true) => {
+  if (!allowOpen && projectMenu.classList.contains("hidden")) {
+    newTaskInput.focus();
+    return;
+  }
+
+  addProjectButton.classList.toggle("hidden");
+  projectMenu.classList.toggle("hidden");
+
+  if (!projectMenu.classList.contains("hidden")) {
+    projectInput.focus();
+  } else {
+    newTaskInput.focus();
+  }
+};
+
 const changeContext = (context) => {
   while (taskList.firstChild) {
     taskList.removeChild(taskList.firstChild);
   }
 
   const tasks = Context.change(context);
-  newTaskInput.focus();
+  toggleProjectMenu(false);
   if (!tasks) return;
   tasks.forEach((task) => renderTask(task));
 };
@@ -119,21 +138,11 @@ inboxButton.addEventListener("click", () => {
 });
 
 addProjectButton.addEventListener("click", () => {
-  const projectMenu = document.querySelector("#project-menu");
-  const projectInput = document.querySelector("input#new-project");
-
-  addProjectButton.classList.add("hidden");
-  projectMenu.classList.remove("hidden");
-
-  projectInput.focus();
+  toggleProjectMenu();
 
   const addButton = projectMenu.querySelector("#add");
   const cancelButton = projectMenu.querySelector("#cancel");
 
   addButton.addEventListener("click", () => {});
-  cancelButton.addEventListener("click", () => {
-    projectMenu.classList.add("hidden");
-    addProjectButton.classList.remove("hidden");
-    newTaskInput.focus();
-  });
+  cancelButton.addEventListener("click", toggleProjectMenu);
 });
