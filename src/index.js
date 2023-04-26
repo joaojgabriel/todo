@@ -51,6 +51,7 @@ const Context = (() => {
   };
 })();
 
+const projectHeader = document.querySelector("h2.project-header");
 const newTaskInput = document.querySelector("input#new-task");
 const dueDateInput = document.querySelector("input#due-date");
 const plusButton = document.querySelector("button#add-task");
@@ -71,7 +72,7 @@ const renderTask = (indexedTask, showProject) => {
   const newTaskCheckbox = newTaskElement.querySelector(
     'input[type="checkbox"]'
   );
-  const newTaskProject = newTaskElement.querySelector(".project");
+  const newTaskProject = newTaskElement.querySelector(".project-name");
   const newTaskEditButton = newTaskElement.querySelector(".edit");
   const newTaskDeleteButton = newTaskElement.querySelector(".delete");
 
@@ -110,6 +111,10 @@ const toggleProjectMenu = (allowOpen = true) => {
 };
 
 const changeContext = (context) => {
+  const isDefaultContext = context === "default";
+
+  projectHeader.textContent = isDefaultContext ? "" : context;
+
   while (taskList.firstChild) {
     taskList.removeChild(taskList.firstChild);
   }
@@ -117,7 +122,6 @@ const changeContext = (context) => {
   const tasks = Context.change(context);
   toggleProjectMenu(false);
   if (!tasks) return;
-  const isDefaultContext = context === "default";
   tasks.forEach((task) => renderTask(task, isDefaultContext));
 };
 

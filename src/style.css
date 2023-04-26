@@ -170,3 +170,7 @@ aside {
   grid-column: 1;
   align-self: start;
 }
+
+.project-button {
+  display: block;
+}
