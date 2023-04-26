@@ -139,3 +139,21 @@ input[type="text"]:not(#new-task) {
 .invalid::after {
   content: "Invalid name";
 }
+
+body {
+  display: grid;
+  grid: 50px 1fr / minmax(50px, 15%) 1fr;
+}
+
+header {
+  justify-self: center;
+}
+
+header,
+main {
+  align-self: center;
+}
+
+main {
+  grid-column: 2;
+}

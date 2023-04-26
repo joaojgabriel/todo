@@ -115,4 +115,9 @@ inboxButton.addEventListener("click", () => {
   changeContext("default");
 });
 
-addProjectButton.addEventListener("click", () => {});
+addProjectButton.addEventListener("click", () => {
+  const projectMenu = lg.createProjectMenu();
+
+  addProjectButton.remove();
+  nav.insertAdjacentElement("afterend", projectMenu);
+});
