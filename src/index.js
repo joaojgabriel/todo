@@ -60,6 +60,8 @@ const nav = document.querySelector("nav");
 const inboxButton = document.querySelector("button#inbox");
 const addProjectButton = document.querySelector("button#add-project");
 
+window.onload = newTaskInput.focus();
+
 const renderTask = (indexedTask) => {
   const newTaskElement = lg.createTaskElement(indexedTask);
 
@@ -90,6 +92,7 @@ const changeContext = (context) => {
   }
 
   const tasks = Context.change(context);
+  newTaskInput.focus();
   if (!tasks) return;
   tasks.forEach((task) => renderTask(task));
 };
@@ -131,5 +134,6 @@ addProjectButton.addEventListener("click", () => {
   cancelButton.addEventListener("click", () => {
     projectMenu.classList.add("hidden");
     addProjectButton.classList.remove("hidden");
+    newTaskInput.focus();
   });
 });
