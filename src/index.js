@@ -7,11 +7,11 @@ const createElement = (innerHTML) => {
   return placeholder.firstElementChild;
 };
 
-const createTaskObject = (input, context) => ({
-  name: input,
+const createTaskObject = (name, context) => ({
+  name,
+  context,
   dueDate: null,
   completed: false,
-  project: context,
 });
 
 const createTaskElement = ({ name, dueDate, completed, project }) => {
@@ -26,6 +26,6 @@ const createTaskElement = ({ name, dueDate, completed, project }) => {
       <button class="edit">Edit</button>
       <button class="delete">Delete</button>
     </li>`;
-  
+
   return createElement(innerHTML);
 };
