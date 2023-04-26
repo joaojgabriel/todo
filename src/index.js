@@ -49,10 +49,13 @@ plusButton.addEventListener("click", () => {
   const newTaskElement = lg.createTaskElement(newTaskObject);
 
   const newTaskCheckbox = newTaskElement.querySelector(`#${name}-checkbox`);
+  // const newTaskEditButton = newTaskElement.querySelector('.edit')
+  // const newTask
   newTaskCheckbox.addEventListener("change", () => {
     newTaskElement.classList.toggle("completed");
     Context.modifyTask(newTaskObject, { completed: newTaskCheckbox.checked });
   });
+
 
   taskList.append(newTaskElement);
 });
