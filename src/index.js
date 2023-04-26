@@ -116,8 +116,20 @@ inboxButton.addEventListener("click", () => {
 });
 
 addProjectButton.addEventListener("click", () => {
-  const projectMenu = lg.createProjectMenu();
+  const projectMenu = document.querySelector("#project-menu");
+  const projectInput = document.querySelector("input#new-project");
 
-  addProjectButton.remove();
-  nav.insertAdjacentElement("afterend", projectMenu);
+  addProjectButton.classList.add("hidden");
+  projectMenu.classList.remove("hidden");
+
+  projectInput.focus();
+
+  const addButton = projectMenu.querySelector("#add");
+  const cancelButton = projectMenu.querySelector("#cancel");
+
+  addButton.addEventListener("click", () => {});
+  cancelButton.addEventListener("click", () => {
+    projectMenu.classList.add("hidden");
+    addProjectButton.classList.remove("hidden");
+  });
 });
