@@ -146,14 +146,21 @@ body {
 }
 
 header {
-  justify-self: center;
+  display: contents;
 }
 
-header,
-main {
+header > * {
   align-self: center;
 }
 
-main {
+h1 {
+  justify-self: center;
+}
+
+header #task-input {
   grid-column: 2;
+}
+
+aside {
+  grid-column: 1;
 }
