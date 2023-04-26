@@ -161,6 +161,12 @@ header #task-input {
   grid-column: 2;
 }
 
+main {
+  grid-column: 2;
+}
+
 aside {
+  grid-row: 2;
   grid-column: 1;
+  align-self: start;
 }
