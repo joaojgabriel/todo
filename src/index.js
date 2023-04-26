@@ -7,25 +7,24 @@ const createElement = (innerHTML) => {
   return placeholder.firstElementChild;
 };
 
-const createTaskObject = (name, context) => ({
+const createTaskObject = (name, dueDate, context) => ({
   name,
+  dueDate,
   context,
-  dueDate: null,
   completed: false,
 });
 
-const createTaskElement = ({ name, dueDate, completed, project }) => {
+const createTaskElement = ({ name, dueDate, completed, context }) => {
   const innerHTML = `
     <li class="task ${completed}">
       <label for="${name}">
         <input type="checkbox" id="${name}" />
         ${name}
       </label>
-      <span class="due-date"${dueDate}<span>
-      <span class="project">${project === "default" ? "" : project}</span>
+      <span class="due-date">${dueDate}</span>
+      <span class="project">${context === "default" ? "" : context}</span>
       <button class="edit">Edit</button>
       <button class="delete">Delete</button>
     </li>`;
-
   return createElement(innerHTML);
 };
