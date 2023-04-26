@@ -65,7 +65,7 @@ const projectInput = document.querySelector("input#new-project");
 
 window.onload = newTaskInput.focus();
 
-const renderTask = (indexedTask) => {
+const renderTask = (indexedTask, showProject) => {
   const newTaskElement = lg.createTaskElement(indexedTask);
 
   const newTaskCheckbox = newTaskElement.querySelector(
@@ -75,11 +75,9 @@ const renderTask = (indexedTask) => {
   const newTaskEditButton = newTaskElement.querySelector(".edit");
   const newTaskDeleteButton = newTaskElement.querySelector(".delete");
 
-  if (Context.getCurrent() === "default") {
-    newTaskProject.classList.remove("hidden");
-  } else {
-    newTaskProject.classList.add("hidden");
-  }
+  if (showProject) newTaskProject.classList.remove("hidden");
+  else newTaskProject.classList.add("hidden");
+
   newTaskCheckbox.addEventListener("change", () => {
     newTaskElement.classList.toggle("completed");
     Context.modifyTask(indexedTask, { completed: newTaskCheckbox.checked });
@@ -119,7 +117,8 @@ const changeContext = (context) => {
   const tasks = Context.change(context);
   toggleProjectMenu(false);
   if (!tasks) return;
-  tasks.forEach((task) => renderTask(task));
+  const isDefaultContext = context === "default";
+  tasks.forEach((task) => renderTask(task, isDefaultContext));
 };
 
 plusButton.addEventListener("click", () => {
