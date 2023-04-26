@@ -18,7 +18,7 @@ const Context = (() => {
       }
 
       if (current === "default") {
-        return Object.values(map[context]).concat();
+        return [].concat(...Object.values(map));
       }
       return map[current];
     },
@@ -71,9 +71,15 @@ const renderTask = (indexedTask) => {
   const newTaskCheckbox = newTaskElement.querySelector(
     'input[type="checkbox"]'
   );
+  const newTaskProject = newTaskElement.querySelector(".project");
   const newTaskEditButton = newTaskElement.querySelector(".edit");
   const newTaskDeleteButton = newTaskElement.querySelector(".delete");
 
+  if (Context.getCurrent() === "default") {
+    newTaskProject.classList.remove("hidden");
+  } else {
+    newTaskProject.classList.add("hidden");
+  }
   newTaskCheckbox.addEventListener("change", () => {
     newTaskElement.classList.toggle("completed");
     Context.modifyTask(indexedTask, { completed: newTaskCheckbox.checked });
@@ -130,6 +136,7 @@ plusButton.addEventListener("click", () => {
   });
   Context.addTask(indexedTask);
 
+  newTaskInput.value = "";
   renderTask(indexedTask);
 });
 
@@ -150,6 +157,7 @@ addProjectButton.addEventListener("click", () => {
       return;
     }
     changeContext(project);
+    projectInput.value = "";
 
     const projectButton = lg.createProjectButton(project);
     projectButton.addEventListener("click", () => {
