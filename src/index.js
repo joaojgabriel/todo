@@ -48,6 +48,9 @@ const Context = (() => {
         }
       });
     },
+    isContext(name) {
+      return name in map;
+    },
   };
 })();
 
@@ -155,7 +158,7 @@ addProjectButton.addEventListener("click", () => {
 
   addButton.addEventListener("click", () => {
     const project = projectInput.value || null;
-    if (!project) {
+    if (!project || Context.isContext(project)) {
       projectInput.focus();
       return;
     }
