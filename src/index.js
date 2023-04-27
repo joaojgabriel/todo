@@ -134,7 +134,8 @@ const changeContext = (context) => {
 plusButton.addEventListener("click", () => {
   const name = newTaskInput.value || null;
   if (!name) return;
-  const dueDate = dueDateInput.value ? new Date(dueDateInput.value) : null;
+	console.log(new Date(dueDateInput.value))
+  const dueDate = dueDateInput.value ? new Date(dueDateInput.value) : "";
   const context = Context.getCurrent();
 
   const indexedTask = Context.indexTask({
