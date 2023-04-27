@@ -28,10 +28,14 @@ export function createTaskElement({
         } id="checkbox-${index}"/>
         ${name}
       </label>
-      <span class="due-date">${formatDate(dueDate) || "No due date"}</span>
-      <span class="project-name">${context === "default" ? "" : context}</span>
-      <button class="edit">Edit</button>
-      <button class="delete">Delete</button>
+      <div>
+        <span class="due-date">${formatDate(dueDate) || "No due date"}</span>
+        <span class="project-name">${
+          context === "default" ? "" : context
+        }</span>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+      </div>
     </li>`;
 
   return createElement(innerHTML);

@@ -24,8 +24,7 @@ const Context = (() => {
     },
     indexTask(taskObject) {
       count += 1;
-      const indexedTask = { ...taskObject, index: count };
-      return indexedTask;
+      return { ...taskObject, index: count };
     },
     addTask(indexedTask) {
       map[current].push(indexedTask);

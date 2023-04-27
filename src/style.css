@@ -174,3 +174,9 @@ aside {
 .project-button {
   display: block;
 }
+
+.task {
+  width: 1000px;
+  display: flex;
+  justify-content: space-between;
+}
