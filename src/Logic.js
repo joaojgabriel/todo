@@ -132,11 +132,9 @@ export function createProjectButton(name) {
 
 
 export function createProjectHeader(name) {
-  const innerHTML = `
-    <h2 class="project-header">
-      ${name}
-    </h2>
-  `;
+  const header = document.createElement("h2");
+  header.classList.add("project-header");
+  header.textContent = name;
 
-  return createElement(innerHTML);
+  return header;
 }
