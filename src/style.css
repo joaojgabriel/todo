@@ -180,3 +180,14 @@ aside {
   display: flex;
   justify-content: space-between;
 }
+
+button {
+  height: 1.4rem;
+}
+
+.right {
+  display: flex;
+  align-content: center;
+  line-height: 1.4rem;
+  gap: 15px;
+}

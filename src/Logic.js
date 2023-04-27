@@ -32,6 +32,7 @@ export function createTaskElement({
   label.appendChild(span);
 
   const div = document.createElement("div");
+  div.className = "right";
 
   const dueDateSpan = document.createElement("span");
   dueDateSpan.className = "due-date";
@@ -121,7 +122,6 @@ export function createEditMenu({ name, dueDate, context, index }) {
   return form;
 }
 
-
 export function createProjectButton(name) {
   const button = document.createElement("button");
   button.classList.add("project-button");
@@ -129,7 +129,6 @@ export function createProjectButton(name) {
 
   return button;
 }
-
 
 export function createProjectHeader(name) {
   const header = document.createElement("h2");
