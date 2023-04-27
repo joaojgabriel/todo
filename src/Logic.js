@@ -37,6 +37,27 @@ export function createTaskElement({
   return createElement(innerHTML);
 }
 
+export function createEditMenu({ name, dueDate, context, index }) {
+  const innerHTML = `<form data-index="${index}" class="edit">
+    <label for="edit-name"
+      >Change task<input id="edit-name" type="text" value="${name}"
+    /></label>
+    <label for="edit-due-date"
+      >Change date<input id="edit-due-date" type="date" value="${dueDate || ""}"
+    /></label>
+    <label for="edit-project">Select project</label>
+    <select id="edit-project" />
+      <option value="${context === "default" ? "None" : context}">${
+    context === "default" ? "None" : context
+  }</option>
+    </select>
+    <input type="submit" value="Confirm">
+    <button class="cancel-edit">Cancel</button>
+  </form>`;
+
+  return createElement(innerHTML);
+}
+
 export function createProjectButton(name) {
   const innerHTML = `
     <button class="project-button">

@@ -69,6 +69,24 @@ const projectInput = document.querySelector("input#new-project");
 
 window.onload = newTaskInput.focus();
 
+const toggleProjectMenu = (allowOpen = true) => {
+  if (!allowOpen && projectMenu.classList.contains("hidden")) {
+    newTaskInput.focus();
+    return;
+  }
+
+  addProjectButton.classList.toggle("hidden");
+  projectMenu.classList.toggle("hidden");
+
+  if (!projectMenu.classList.contains("hidden")) {
+    projectInput.focus();
+  } else {
+    newTaskInput.focus();
+  }
+};
+
+const toggleEditMenu = (allowOpen = true) => {};
+
 const renderTask = (indexedTask, showProject) => {
   const newTaskElement = lg.createTaskElement(indexedTask);
 
@@ -87,7 +105,9 @@ const renderTask = (indexedTask, showProject) => {
     Context.modifyTask(indexedTask, { completed: newTaskCheckbox.checked });
   });
 
-  newTaskEditButton.addEventListener("click", () => {});
+  newTaskEditButton.addEventListener("click", () => {
+    const editMenu = lg.createEditMenu();
+  });
 
   newTaskDeleteButton.addEventListener("click", () => {
     newTaskElement.remove();
@@ -95,22 +115,6 @@ const renderTask = (indexedTask, showProject) => {
   });
 
   taskList.append(newTaskElement);
-};
-
-const toggleProjectMenu = (allowOpen = true) => {
-  if (!allowOpen && projectMenu.classList.contains("hidden")) {
-    newTaskInput.focus();
-    return;
-  }
-
-  addProjectButton.classList.toggle("hidden");
-  projectMenu.classList.toggle("hidden");
-
-  if (!projectMenu.classList.contains("hidden")) {
-    projectInput.focus();
-  } else {
-    newTaskInput.focus();
-  }
 };
 
 const changeContext = (context) => {
