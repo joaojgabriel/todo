@@ -1,10 +1,4 @@
-import { formatDistanceToNow } from "date-fns";
-
-const formatDate = (date) => {
-  if (!date) return false;
-
-  return formatDistanceToNow(date, { addSuffix: true });
-};
+import { intlFormatDistance, parseISO } from "date-fns";
 
 export function createTaskElement({
   name,
@@ -36,7 +30,9 @@ export function createTaskElement({
 
   const dueDateSpan = document.createElement("span");
   dueDateSpan.className = "due-date";
-  dueDateSpan.textContent = formatDate(dueDate) || "No due date";
+  dueDateSpan.textContent = dueDate
+    ? `Due ${intlFormatDistance(parseISO(dueDate), new Date())}`
+    : "No due date";
 
   const contextSpan = document.createElement("span");
   contextSpan.className = "project-name";

@@ -5,6 +5,10 @@ const Context = (() => {
   let current = "default";
   const map = { default: [] };
   let count = 0;
+  const addIndex = (task) => {
+    count += 1;
+    return { ...task, index: count };
+  };
   return {
     getCurrent() {
       return current;
@@ -20,14 +24,14 @@ const Context = (() => {
       if (current === "default") {
         return [].concat(...Object.values(map));
       }
+
       return map[current];
     },
-    indexTask(taskObject) {
-      count += 1;
-      return { ...taskObject, index: count };
-    },
-    addTask(indexedTask) {
-      map[current].push(indexedTask);
+
+    addTask(task) {
+      map[current].push(addIndex(task));
+
+      return task;
     },
     deleteTask({ context, index }) {
       const { length } = map[context];
@@ -86,34 +90,32 @@ const toggleProjectMenu = (allowOpen = true) => {
 
 const toggleEditMenu = (allowOpen = true) => {};
 
-const renderTask = (indexedTask, showProject) => {
-  const newTaskElement = lg.createTaskElement(indexedTask);
+const renderTask = (task, showProject) => {
+  const taskElement = lg.createTaskElement(task);
 
-  const newTaskCheckbox = newTaskElement.querySelector(
-    'input[type="checkbox"]'
-  );
-  const newTaskProject = newTaskElement.querySelector(".project-name");
-  const newTaskEditButton = newTaskElement.querySelector(".edit");
-  const newTaskDeleteButton = newTaskElement.querySelector(".delete");
+  const checkbox = taskElement.querySelector('input[type="checkbox"]');
+  const projectName = taskElement.querySelector(".project-name");
+  const editButton = taskElement.querySelector(".edit");
+  const deleteButton = taskElement.querySelector(".delete");
 
-  if (showProject) newTaskProject.classList.remove("hidden");
-  else newTaskProject.classList.add("hidden");
+  if (showProject) projectName.classList.remove("hidden");
+  else projectName.classList.add("hidden");
 
-  newTaskCheckbox.addEventListener("change", () => {
-    newTaskElement.classList.toggle("completed");
-    Context.modifyTask(indexedTask, { completed: newTaskCheckbox.checked });
+  checkbox.addEventListener("change", () => {
+    taskElement.classList.toggle("completed");
+    Context.modifyTask(task, { completed: checkbox.checked });
   });
 
-  newTaskEditButton.addEventListener("click", () => {
+  editButton.addEventListener("click", () => {
     const editMenu = lg.createEditMenu();
   });
 
-  newTaskDeleteButton.addEventListener("click", () => {
-    newTaskElement.remove();
-    Context.deleteTask(indexedTask);
+  deleteButton.addEventListener("click", () => {
+    taskElement.remove();
+    Context.deleteTask(task);
   });
 
-  taskList.append(newTaskElement);
+  taskList.append(taskElement);
 };
 
 const changeContext = (context) => {
@@ -132,22 +134,18 @@ const changeContext = (context) => {
 };
 
 plusButton.addEventListener("click", () => {
-  const name = newTaskInput.value || null;
-  if (!name) return;
-	console.log(new Date(dueDateInput.value))
-  const dueDate = dueDateInput.value ? new Date(dueDateInput.value) : "";
-  const context = Context.getCurrent();
+  if (!newTaskInput.value) return;
 
-  const indexedTask = Context.indexTask({
-    name,
-    dueDate,
-    context,
-    completed: false,
-  });
-  Context.addTask(indexedTask);
+  renderTask(
+    Context.addTask({
+      name: newTaskInput.value,
+      dueDate: dueDateInput.value ? `${dueDateInput.value}T00:00` : null,
+      context: Context.getCurrent(),
+      completed: false,
+    })
+  );
 
   newTaskInput.value = "";
-  renderTask(indexedTask);
 });
 
 inboxButton.addEventListener("click", () => {
