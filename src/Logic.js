@@ -75,7 +75,19 @@ export function createTaskElement({
   return li;
 }
 
-export function createEditMenu({ name, dueDate, context, index }) {
+const createProjectOption = (project) => {
+  const projectOption = document.createElement("option");
+  if (project === "default") {
+    projectOption.setAttribute("value", "None");
+    projectOption.textContent = "None";
+  } else {
+    projectOption.setAttribute("value", project);
+    projectOption.textContent = project;
+  }
+  return projectOption;
+};
+
+export function createEditMenu({ name, dueDate, context, index }, projects) {
   const form = document.createElement("form");
   form.setAttribute("data-index", index);
   form.className = "edit-menu";
@@ -111,18 +123,13 @@ export function createEditMenu({ name, dueDate, context, index }) {
   projectSelect.setAttribute("id", "edit-project");
   form.appendChild(projectSelect);
 
-  const noneOption = document.createElement("option");
-  noneOption.setAttribute("value", "None");
-  noneOption.textContent = "None";
-  projectSelect.appendChild(noneOption);
+  projectSelect.append(createProjectOption(context));
 
-  if (context !== "default") {
-    const contextOption = document.createElement("option");
-    contextOption.setAttribute("value", context);
-    contextOption.textContent = context;
-    projectSelect.appendChild(contextOption);
-  }
-
+  projects.forEach((project) => {
+    if (project !== context) {
+      projectSelect.append(createProjectOption(project));
+    }
+  });
   const submitInput = document.createElement("input");
   submitInput.setAttribute("type", "submit");
   submitInput.setAttribute("value", "Confirm");

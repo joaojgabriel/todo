@@ -13,6 +13,9 @@ const Context = (() => {
     getCurrent() {
       return current;
     },
+    getProjects() {
+      return [...Object.keys(map)];
+    },
     change(context) {
       // Changes context and returns appropriate task list
       current = context;
@@ -115,7 +118,7 @@ const renderTask = (task, showProject) => {
 
   editButton.addEventListener("click", () => {
     closeEdit();
-    const editMenu = lg.createEditMenu(task);
+    const editMenu = lg.createEditMenu(task, Context.getProjects());
     taskElement.append(editMenu);
   });
 
