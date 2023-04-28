@@ -89,7 +89,7 @@ video {
   border: 0;
   font-size: 100%;
   font: inherit;
-  vertical-align: baseline;
+  /* vertical-align: baseline; */
 }
 /* HTML5 display-role reset for older browsers */
 article,
@@ -179,8 +179,18 @@ header > * {
   align-self: center;
 }
 
-h1 {
+h1,
+aside,
+aside * {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   justify-self: center;
+  text-align: center;
+}
+
+aside {
+  width: 75%;
 }
 
 header #task-input {
@@ -202,7 +212,7 @@ aside {
 }
 
 .task {
-  width: 1000px;
+  width: 85%;
   display: flex;
   justify-content: space-between;
 }
@@ -212,4 +222,26 @@ aside {
   align-content: center;
   line-height: 1.4rem;
   gap: 15px;
+}
+
+#task-input {
+  display: flex;
+  gap: 0.5rem;
+  align-content: center;
+}
+#task-input > * {
+  padding: 0.2rem 0.4rem;
+}
+
+#new-task {
+  width: 60%;
+}
+
+#add-task {
+  font-size: 1.4rem;
+  line-height: 1.4rem;
+}
+
+.project-header {
+  margin-bottom: 0.5rem;
 }
