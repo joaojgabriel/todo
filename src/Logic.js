@@ -64,8 +64,12 @@ export function createTaskElement({
   rightSide.appendChild(editButton);
   rightSide.appendChild(deleteButton);
 
-  li.appendChild(leftSide);
-  li.appendChild(rightSide);
+  const taskDiv = document.createElement("div");
+  taskDiv.className = "task-container";
+  taskDiv.appendChild(leftSide);
+  taskDiv.appendChild(rightSide);
+
+  li.appendChild(taskDiv);
 
   return li;
 }

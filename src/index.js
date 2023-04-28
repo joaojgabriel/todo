@@ -111,7 +111,8 @@ const renderTask = (task, showProject) => {
   });
 
   editButton.addEventListener("click", () => {
-    const editMenu = lg.createEditMenu();
+    const editMenu = lg.createEditMenu(task);
+    taskElement.append(editMenu);
   });
 
   deleteButton.addEventListener("click", () => {

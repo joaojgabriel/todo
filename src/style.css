@@ -220,8 +220,19 @@ aside {
 
 .task {
   width: 85%;
+}
+
+.task-container {
   display: flex;
   justify-content: space-between;
+}
+
+.edit > * {
+  margin: 0.5rem;
+}
+
+.edit > * > * {
+  margin: 0.25rem;
 }
 
 .right {
