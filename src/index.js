@@ -153,6 +153,9 @@ const renderTask = (task, showProject) => {
       label.append(document.createTextNode(`${newName}`));
       dueDateSpan.textContent = lg.formatDueDate(newDueDate);
       projectName.textContent = newContext === "default" ? "" : newContext;
+
+      const current = Context.getCurrent();
+      if (current !== "default" && newContext !== current) taskElement.remove();
       closeEdit();
     };
 
@@ -197,6 +200,7 @@ plusButton.addEventListener("click", () => {
 
   dueDateInput.value = "";
   newTaskInput.value = "";
+  closeEdit();
 });
 
 inboxButton.addEventListener("click", () => {
