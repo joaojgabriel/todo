@@ -145,6 +145,13 @@ input[type="checkbox"] {
   appearance: none;
 }
 
+#task-list {
+  display: flex;
+  flex-direction: column-reverse;
+  order: -1;
+  gap: 0.5rem;
+}
+
 .task-label span {
   display: inline-block;
   width: 25px;
@@ -238,8 +245,13 @@ aside {
 }
 
 #add-task {
-  font-size: 1.4rem;
-  line-height: 1.4rem;
+  background: #ff4040;
+  color: #181a1b;
+  font-weight: bold;
+  font-size: 1.8rem;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
 }
 
 .project-header {
