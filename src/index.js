@@ -148,9 +148,7 @@ plusButton.addEventListener("click", () => {
   renderTask(
     Context.addTask({
       name: newTaskInput.value,
-      dueDate: dueDateInput.value
-        ? new Date(`${dueDateInput.value}T00:00`)
-        : null,
+      dueDate: dueDateInput.value ? `${dueDateInput.value}T00:00` : null,
       context: Context.getCurrent(),
       completed: false,
     })

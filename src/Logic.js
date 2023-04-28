@@ -1,12 +1,13 @@
-import { intlFormatDistance, isBefore } from "date-fns";
+import { intlFormatDistance, isBefore, parseISO } from "date-fns";
 
 export function formatDueDate(date) {
   if (!date) return "No due date";
 
+  const dateObj = parseISO(date);
   const now = new Date();
-  const text = isBefore(date, now) ? "Overdue since " : "Due ";
+  const text = isBefore(dateObj, now) ? "Overdue since " : "Due ";
 
-  return text + intlFormatDistance(date, now);
+  return text + intlFormatDistance(dateObj, now);
 }
 
 export function createTaskElement({
@@ -98,7 +99,7 @@ export function createEditMenu({ name, dueDate, context, index }) {
   const dateInput = document.createElement("input");
   dateInput.setAttribute("id", "edit-due-date");
   dateInput.setAttribute("type", "date");
-  dateInput.setAttribute("value", dueDate || "");
+  if (dueDate) dateInput.setAttribute("value", dueDate.slice(0, -6));
   dateLabel.appendChild(dateInput);
 
   const projectLabel = document.createElement("label");
