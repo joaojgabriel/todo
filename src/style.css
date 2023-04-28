@@ -133,6 +133,7 @@ body {
 }
 
 input,
+select,
 button {
   background: #2b2a33;
   color: rgb(211, 211, 211);
@@ -227,11 +228,11 @@ aside {
   justify-content: space-between;
 }
 
-.edit > * {
+.edit-menu > * {
   margin: 0.5rem;
 }
 
-.edit > * > * {
+.edit-menu > * > * {
   margin: 0.25rem;
 }
 

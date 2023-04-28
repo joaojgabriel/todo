@@ -77,7 +77,7 @@ export function createTaskElement({
 export function createEditMenu({ name, dueDate, context, index }) {
   const form = document.createElement("form");
   form.setAttribute("data-index", index);
-  form.classList.add("edit");
+  form.className = "edit-menu";
 
   const nameLabel = document.createElement("label");
   nameLabel.setAttribute("for", "edit-name");

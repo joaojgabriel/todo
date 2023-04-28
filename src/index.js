@@ -89,7 +89,10 @@ const toggleProjectMenu = (allowOpen = true) => {
   }
 };
 
-const toggleEditMenu = (allowOpen = true) => {};
+const closeEdit = () => {
+  const edit = document.querySelector(".edit-menu");
+  if (edit) edit.remove();
+};
 
 const renderTask = (task, showProject) => {
   const taskElement = lg.createTaskElement(task);
@@ -111,6 +114,7 @@ const renderTask = (task, showProject) => {
   });
 
   editButton.addEventListener("click", () => {
+    closeEdit();
     const editMenu = lg.createEditMenu(task);
     taskElement.append(editMenu);
   });
