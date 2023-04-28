@@ -96,7 +96,7 @@ const renderTask = (task, showProject) => {
 
   const checkbox = taskElement.querySelector('input[type="checkbox"]');
   const projectName = taskElement.querySelector(".project-name");
-  const dueDate = taskElement.querySelector(".due-date");
+  const dueDateSpan = taskElement.querySelector(".due-date");
   const editButton = taskElement.querySelector(".edit");
   const deleteButton = taskElement.querySelector(".delete");
 
@@ -106,8 +106,8 @@ const renderTask = (task, showProject) => {
   checkbox.addEventListener("change", () => {
     taskElement.classList.toggle("completed");
     Context.modifyTask(task, { completed: checkbox.checked });
-    if (checkbox.checked) dueDate.textContent = "Completed";
-    else lg.setDueDate(dueDate, task.dueDate);
+    if (checkbox.checked) dueDateSpan.textContent = "Completed";
+    else dueDateSpan.textContent = lg.formatDueDate(task.dueDate);
   });
 
   editButton.addEventListener("click", () => {
@@ -143,7 +143,9 @@ plusButton.addEventListener("click", () => {
   renderTask(
     Context.addTask({
       name: newTaskInput.value,
-      dueDate: dueDateInput.value ? `${dueDateInput.value}T00:00` : null,
+      dueDate: dueDateInput.value
+        ? new Date(`${dueDateInput.value}T00:00`)
+        : null,
       context: Context.getCurrent(),
       completed: false,
     })

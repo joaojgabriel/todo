@@ -1,10 +1,12 @@
-import { intlFormatDistance, parseISO } from "date-fns";
+import { intlFormatDistance, isBefore } from "date-fns";
 
-export function setDueDate(element, date) {
-  // eslint-disable-next-line no-param-reassign
-  element.textContent = date
-    ? `Due ${intlFormatDistance(parseISO(date), new Date())}`
-    : "No due date";
+export function formatDueDate(date) {
+  if (!date) return "No due date";
+
+  const now = new Date();
+  const text = isBefore(date, now) ? "Overdue since " : "Due ";
+
+  return text + intlFormatDistance(date, now);
 }
 
 export function createTaskElement({
@@ -44,7 +46,7 @@ export function createTaskElement({
 
   const dueDateSpan = document.createElement("span");
   dueDateSpan.className = "due-date";
-  setDueDate(dueDateSpan, dueDate);
+  dueDateSpan.textContent = formatDueDate(dueDate);
 
   const editButton = document.createElement("button");
   editButton.className = "edit";
