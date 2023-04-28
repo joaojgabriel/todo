@@ -1,5 +1,12 @@
 import { intlFormatDistance, parseISO } from "date-fns";
 
+export function setDueDate(element, date) {
+  // eslint-disable-next-line no-param-reassign
+  element.textContent = date
+    ? `Due ${intlFormatDistance(parseISO(date), new Date())}`
+    : "No due date";
+}
+
 export function createTaskElement({
   name,
   dueDate,
@@ -8,35 +15,36 @@ export function createTaskElement({
   index,
 }) {
   const li = document.createElement("li");
-  li.id = `task-${index}`;
+  li.setAttribute("data-index", `${index}`);
   li.className = `task ${completed ? "completed" : ""}`;
 
-  const label = document.createElement("label");
-  label.htmlFor = `checkbox-${index}`;
+  const leftSide = document.createElement("div");
+  leftSide.className = "left";
 
   const checkbox = document.createElement("input");
+  checkbox.className = "checkbox";
   checkbox.type = "checkbox";
   checkbox.id = `checkbox-${index}`;
   checkbox.checked = completed;
 
-  const span = document.createElement("span");
-  span.textContent = name;
+  const label = document.createElement("label");
+  label.htmlFor = `checkbox-${index}`;
+  label.texContext = name;
+  label.className = "task-label";
 
-  label.appendChild(checkbox);
-  label.appendChild(span);
+  label.append(document.createElement("span"));
+  label.append(document.createTextNode(`${name}`));
 
-  const div = document.createElement("div");
-  div.className = "right";
-
-  const dueDateSpan = document.createElement("span");
-  dueDateSpan.className = "due-date";
-  dueDateSpan.textContent = dueDate
-    ? `Due ${intlFormatDistance(parseISO(dueDate), new Date())}`
-    : "No due date";
+  const rightSide = document.createElement("div");
+  rightSide.className = "right";
 
   const contextSpan = document.createElement("span");
   contextSpan.className = "project-name";
   contextSpan.textContent = context === "default" ? "" : context;
+
+  const dueDateSpan = document.createElement("span");
+  dueDateSpan.className = "due-date";
+  setDueDate(dueDateSpan, dueDate);
 
   const editButton = document.createElement("button");
   editButton.className = "edit";
@@ -46,13 +54,16 @@ export function createTaskElement({
   deleteButton.className = "delete";
   deleteButton.textContent = "Delete";
 
-  div.appendChild(dueDateSpan);
-  div.appendChild(contextSpan);
-  div.appendChild(editButton);
-  div.appendChild(deleteButton);
+  leftSide.append(checkbox);
+  leftSide.appendChild(label);
 
-  li.appendChild(label);
-  li.appendChild(div);
+  rightSide.appendChild(contextSpan);
+  rightSide.appendChild(dueDateSpan);
+  rightSide.appendChild(editButton);
+  rightSide.appendChild(deleteButton);
+
+  li.appendChild(leftSide);
+  li.appendChild(rightSide);
 
   return li;
 }

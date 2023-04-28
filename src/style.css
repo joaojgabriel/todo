@@ -141,8 +141,49 @@ input[type="text"]:not(#new-task) {
 }
 
 body {
+  background: #181a1b;
+  color: white;
   display: grid;
   grid: 50px 1fr / minmax(50px, 15%) 1fr;
+}
+
+input,
+button {
+  background: #2b2a33;
+  color: rgb(211, 211, 211);
+  border: grey;
+  border-radius: 5px;
+  line-height: 1.4rem;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+}
+
+.task-label span {
+  display: inline-block;
+  width: 25px;
+  height: 19px;
+  margin: 0 5px -4px 0;
+}
+
+.task-label span::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 1rem;
+  height: 1rem;
+  background: transparent;
+  border: 2px solid #ff4040;
+}
+
+.checkbox:checked + .task-label span::before {
+  background-color: #ff4040;
+}
+
+.checkbox:checked + .task-label {
+  text-decoration: line-through;
+  color: rgb(180, 180, 180);
 }
 
 header {
@@ -179,10 +220,6 @@ aside {
   width: 1000px;
   display: flex;
   justify-content: space-between;
-}
-
-button {
-  height: 1.4rem;
 }
 
 .right {

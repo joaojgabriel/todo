@@ -29,9 +29,10 @@ const Context = (() => {
     },
 
     addTask(task) {
-      map[current].push(addIndex(task));
+      const indexed = addIndex(task);
+      map[current].push(indexed);
 
-      return task;
+      return indexed;
     },
     deleteTask({ context, index }) {
       const { length } = map[context];
@@ -95,6 +96,7 @@ const renderTask = (task, showProject) => {
 
   const checkbox = taskElement.querySelector('input[type="checkbox"]');
   const projectName = taskElement.querySelector(".project-name");
+  const dueDate = taskElement.querySelector(".due-date");
   const editButton = taskElement.querySelector(".edit");
   const deleteButton = taskElement.querySelector(".delete");
 
@@ -104,6 +106,8 @@ const renderTask = (task, showProject) => {
   checkbox.addEventListener("change", () => {
     taskElement.classList.toggle("completed");
     Context.modifyTask(task, { completed: checkbox.checked });
+    if (checkbox.checked) dueDate.textContent = "Completed";
+    else lg.setDueDate(dueDate, task.dueDate);
   });
 
   editButton.addEventListener("click", () => {
@@ -145,6 +149,7 @@ plusButton.addEventListener("click", () => {
     })
   );
 
+  dueDateInput.value = "";
   newTaskInput.value = "";
 });
 
