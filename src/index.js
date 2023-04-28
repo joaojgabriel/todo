@@ -46,14 +46,22 @@ const Context = (() => {
       }
     },
     modifyTask({ context, index }, changeObject) {
-      map[context].forEach((task) => {
-        if (task.index === index) {
-          [...Object.entries(changeObject)].forEach(([key, value]) => {
-            // eslint-disable-next-line no-param-reassign
-            task[key] = value;
-          });
-        }
+      const taskLocation = map[context].findIndex(
+        (task) => task.index === index
+      );
+
+      [...Object.entries(changeObject)].forEach(([key, value]) => {
+        map[context][taskLocation][key] = value;
       });
+
+      const task = map[context][taskLocation];
+      if (changeObject.context) {
+        map[changeObject.context].push(task);
+        map[context].splice(taskLocation, 1);
+        // task = map[changeObject.context];
+      }
+
+      console.log(task);
     },
     isContext(name) {
       return name in map;
@@ -100,7 +108,7 @@ const closeEdit = () => {
 const renderTask = (task, showProject) => {
   const taskElement = lg.createTaskElement(task);
 
-  const checkbox = taskElement.querySelector('input[type="checkbox"]');
+  const checkbox = taskElement.querySelector(".checkbox");
   const projectName = taskElement.querySelector(".project-name");
   const dueDateSpan = taskElement.querySelector(".due-date");
   const editButton = taskElement.querySelector(".edit");
@@ -112,13 +120,42 @@ const renderTask = (task, showProject) => {
   checkbox.addEventListener("change", () => {
     taskElement.classList.toggle("completed");
     Context.modifyTask(task, { completed: checkbox.checked });
-    if (checkbox.checked) dueDateSpan.textContent = "Completed";
-    else dueDateSpan.textContent = lg.formatDueDate(task.dueDate);
+    dueDateSpan.textContent = checkbox.checked
+      ? "Completed"
+      : lg.formatDueDate(task.dueDate);
   });
 
   editButton.addEventListener("click", () => {
     closeEdit();
     const editMenu = lg.createEditMenu(task, Context.getProjects());
+
+    editMenu.onsubmit = (event) => {
+      event.preventDefault();
+
+      const newName = editMenu.querySelector("#edit-name").value;
+      const newDueDate = editMenu.querySelector("#edit-due-date").value
+        ? `${editMenu.querySelector("#edit-due-date").value}T00:00`
+        : null;
+      const newContext = editMenu.querySelector("#edit-project").value;
+
+      Context.modifyTask(task, {
+        name: newName,
+        dueDate: newDueDate,
+        context: newContext,
+      });
+
+      checkbox.checked = false;
+      const label = taskElement.querySelector("label");
+      while (label.firstChild) {
+        label.removeChild(label.firstChild);
+      }
+      label.append(document.createElement("span"));
+      label.append(document.createTextNode(`${newName}`));
+      dueDateSpan.textContent = lg.formatDueDate(newDueDate);
+      projectName.textContent = newContext === "default" ? "" : newContext;
+      closeEdit();
+    };
+
     taskElement.append(editMenu);
   });
 
@@ -148,11 +185,12 @@ const changeContext = (context) => {
 plusButton.addEventListener("click", () => {
   if (!newTaskInput.value) return;
 
+  const context = Context.getCurrent();
   renderTask(
     Context.addTask({
       name: newTaskInput.value,
       dueDate: dueDateInput.value ? `${dueDateInput.value}T00:00` : null,
-      context: Context.getCurrent(),
+      context,
       completed: false,
     })
   );

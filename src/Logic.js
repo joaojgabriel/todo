@@ -78,7 +78,7 @@ export function createTaskElement({
 const createProjectOption = (project) => {
   const projectOption = document.createElement("option");
   if (project === "default") {
-    projectOption.setAttribute("value", "None");
+    projectOption.setAttribute("value", "default");
     projectOption.textContent = "None";
   } else {
     projectOption.setAttribute("value", project);
@@ -130,6 +130,7 @@ export function createEditMenu({ name, dueDate, context, index }, projects) {
       projectSelect.append(createProjectOption(project));
     }
   });
+
   const submitInput = document.createElement("input");
   submitInput.setAttribute("type", "submit");
   submitInput.setAttribute("value", "Confirm");
