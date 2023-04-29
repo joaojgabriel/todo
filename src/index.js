@@ -1,10 +1,57 @@
 import "./style.css";
 import * as lg from "./Logic";
 
+function storageAvailable(type) {
+  let storage;
+  try {
+    storage = window[type];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return true;
+  } catch (e) {
+    return (
+      e instanceof DOMException &&
+      // everything except Firefox
+      (e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === "QuotaExceededError" ||
+        // Firefox
+        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+      // acknowledge QuotaExceededError only if there's something already stored
+      storage &&
+      storage.length !== 0
+    );
+  }
+}
+
 const Context = (() => {
   let current = "default";
-  const map = { default: [] };
+  let map = { default: [] };
   let count = 0;
+
+  if (storageAvailable("localStorage")) {
+    if (localStorage.getItem("count") ?? null) {
+      populateStorage();
+    } else {
+      map = JSON.parse(localStorage.getItem("map"));
+      count = +localStorage.getItem("count");
+    }
+  }
+
+  function populateStorage() {
+    localStorage.setItem("map", JSON.stringify(map));
+    localStorage.setItem("count", count);
+
+    map = JSON.parse(localStorage.getItem("map"));
+    count = +localStorage.getItem("count");
+
+    // console.log({ map, count });
+  }
+
   const addIndex = (task) => {
     count += 1;
     return { ...task, index: count };
@@ -16,12 +63,13 @@ const Context = (() => {
     getProjects() {
       return [...Object.keys(map)];
     },
-    change(context) {
+    set(context) {
       // Changes context and returns appropriate task list
       current = context;
 
       if (!map[current]) {
         map[current] = [];
+        populateStorage();
       }
 
       if (current === "default") {
@@ -34,7 +82,7 @@ const Context = (() => {
     addTask(task) {
       const indexed = addIndex(task);
       map[current].push(indexed);
-
+      populateStorage();
       return indexed;
     },
     deleteTask({ context, index }) {
@@ -58,10 +106,7 @@ const Context = (() => {
       if (changeObject.context) {
         map[changeObject.context].push(task);
         map[context].splice(taskLocation, 1);
-        // task = map[changeObject.context];
       }
-
-      console.log(task);
     },
     isContext(name) {
       return name in map;
@@ -170,7 +215,7 @@ const renderTask = (task, showProject) => {
   taskList.append(taskElement);
 };
 
-const changeContext = (context) => {
+const setContext = (context) => {
   const isDefaultContext = context === "default";
 
   projectHeader.textContent = isDefaultContext ? "" : context;
@@ -179,7 +224,7 @@ const changeContext = (context) => {
     taskList.removeChild(taskList.firstChild);
   }
 
-  const tasks = Context.change(context);
+  const tasks = Context.set(context);
   toggleProjectMenu(false);
   if (!tasks) return;
   tasks.forEach((task) => renderTask(task, isDefaultContext));
@@ -204,7 +249,7 @@ plusButton.addEventListener("click", () => {
 });
 
 inboxButton.addEventListener("click", () => {
-  changeContext("default");
+  setContext("default");
 });
 
 addProjectButton.addEventListener("click", () => {
@@ -219,12 +264,12 @@ addProjectButton.addEventListener("click", () => {
       projectInput.focus();
       return;
     }
-    changeContext(project);
+    setContext(project);
     projectInput.value = "";
 
     const projectButton = lg.createProjectButton(project);
     projectButton.addEventListener("click", () => {
-      changeContext(project);
+      setContext(project);
     });
 
     nav.append(projectButton);
