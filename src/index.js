@@ -133,7 +133,10 @@ const addProjectButton = document.querySelector("button#add-project");
 const projectMenu = document.querySelector("#project-menu");
 const projectInput = document.querySelector("input#new-project");
 
-window.onload = newTaskInput.focus();
+window.onload = () => {
+  newTaskInput.value = "";
+  newTaskInput.focus();
+};
 
 const toggleProjectMenu = (allowOpen = true) => {
   if (!allowOpen && projectMenu.classList.contains("hidden")) {

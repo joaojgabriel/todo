@@ -135,11 +135,15 @@ body {
 input,
 select,
 button {
-  background: #2b2a33;
+  background: rgb(43, 42, 51);
   color: rgb(211, 211, 211);
   border: grey;
   border-radius: 5px;
   line-height: 1.4rem;
+}
+
+button {
+  cursor: pointer;
 }
 
 input[type="checkbox"] {
@@ -215,6 +219,7 @@ aside {
   background: rgb(255, 64, 64);
   color: #181a1b;
   font-weight: bold;
+  cursor: default;
 }
 
 header #task-input {
@@ -233,6 +238,11 @@ aside {
 
 .project-button {
   display: block;
+}
+
+.project-button:not(.current-context):hover,
+#add-project:hover {
+  background: rgba(43, 42, 51, 0.8);
 }
 
 .task {
