@@ -201,6 +201,12 @@ aside {
   width: 75%;
 }
 
+.current-context {
+  background: rgb(255, 64, 64);
+  color: #181a1b;
+  font-weight: bold;
+}
+
 header #task-input {
   grid-column: 2;
 }
@@ -257,13 +263,17 @@ aside {
 }
 
 #add-task {
-  background: #ff4040;
+  background: rgba(255, 64, 64, 1);
   color: #181a1b;
   font-weight: bold;
   font-size: 1.8rem;
   width: 2rem;
   height: 2rem;
   display: grid;
+}
+
+#add-task:hover {
+  background: rgba(255, 64, 64, 0.9);
 }
 
 .project-header {

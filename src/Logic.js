@@ -144,10 +144,11 @@ export function createEditMenu({ name, dueDate, context, index }, projects) {
   return form;
 }
 
-export function createContextButton(context) {
+export function createContextButton(context, isCurrent) {
   const button = document.createElement("button");
   button.classList.add("project-button");
   button.textContent = context === "default" ? "Inbox" : context;
+  if (isCurrent) button.classList.add("current-context");
 
   return button;
 }

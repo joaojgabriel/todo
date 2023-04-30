@@ -128,7 +128,6 @@ const plusButton = document.querySelector("button#add-task");
 const taskList = document.querySelector("ul#task-list");
 
 const nav = document.querySelector("nav");
-// const inboxButton = document.querySelector("button#inbox");
 const addProjectButton = document.querySelector("button#add-project");
 
 const projectMenu = document.querySelector("#project-menu");
@@ -233,25 +232,26 @@ const setContext = (context) => {
 
   const tasks = Context.set(context);
   toggleProjectMenu(false);
-  if (!tasks) return;
-  tasks.forEach((task) => renderTask(task, isDefaultContext));
-};
 
-const setupNavButton = (context) => {
-  const contextButton = lg.createContextButton(context);
-  contextButton.addEventListener("click", () => {
-    setContext(context);
-  });
-
-  nav.append(contextButton);
-};
-
-const setNav = () => {
+  // Update nav
   const contexts = Context.getContexts();
   while (nav.firstChild) {
     nav.removeChild(nav.firstChild);
   }
-  contexts.forEach((context) => setupNavButton(context));
+  contexts.forEach((contextName) => {
+    const contextButton =
+      contextName === context
+        ? lg.createContextButton(contextName, true)
+        : lg.createContextButton(contextName, false);
+    contextButton.addEventListener("click", () => {
+      setContext(contextName);
+    });
+
+    nav.append(contextButton);
+  });
+
+  if (!tasks) return;
+  tasks.forEach((task) => renderTask(task, isDefaultContext));
 };
 
 plusButton.addEventListener("click", () => {
@@ -286,11 +286,8 @@ addProjectButton.addEventListener("click", () => {
     }
     setContext(project);
     projectInput.value = "";
-
-    setNav(project);
   });
   cancelButton.addEventListener("click", toggleProjectMenu);
 });
 
 setContext("default");
-setNav("default");
