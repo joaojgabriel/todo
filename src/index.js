@@ -242,10 +242,10 @@ const setContext = (context) => {
     nav.removeChild(nav.firstChild);
   }
   contexts.forEach((contextName) => {
-    const contextButton =
+    const contextButton = lg.createContextButton(
+      contextName,
       contextName === context
-        ? lg.createContextButton(contextName, true)
-        : lg.createContextButton(contextName, false);
+    );
     contextButton.addEventListener("click", () => {
       setContext(contextName);
     });
