@@ -31,25 +31,29 @@ function storageAvailable(type) {
 const Context = (() => {
   let current = "default";
   let map = { default: [] };
+  let contexts = ["default"];
   let count = 0;
 
-  if (storageAvailable("localStorage")) {
-    if (localStorage.getItem("count") ?? null) {
-      populateStorage();
-    } else {
-      map = JSON.parse(localStorage.getItem("map"));
-      count = +localStorage.getItem("count");
-    }
-  }
+  const setValues = () => {
+    map = JSON.parse(localStorage.getItem("map"));
+    contexts = JSON.parse(localStorage.getItem("contexts"));
+    count = +localStorage.getItem("count");
+  };
 
-  function populateStorage() {
+  const populateStorage = () => {
     localStorage.setItem("map", JSON.stringify(map));
+    localStorage.setItem("contexts", JSON.stringify(contexts));
     localStorage.setItem("count", count);
 
-    map = JSON.parse(localStorage.getItem("map"));
-    count = +localStorage.getItem("count");
+    setValues();
+  };
 
-    // console.log({ map, count });
+  if (storageAvailable("localStorage")) {
+    if (!localStorage.getItem("count")) {
+      populateStorage();
+    } else {
+      setValues();
+    }
   }
 
   const addIndex = (task) => {
@@ -60,8 +64,8 @@ const Context = (() => {
     getCurrent() {
       return current;
     },
-    getProjects() {
-      return [...Object.keys(map)];
+    getContexts() {
+      return contexts;
     },
     set(context) {
       // Changes context and returns appropriate task list
@@ -69,6 +73,7 @@ const Context = (() => {
 
       if (!map[current]) {
         map[current] = [];
+        contexts = [...contexts, current];
         populateStorage();
       }
 
@@ -92,6 +97,7 @@ const Context = (() => {
           map[context].splice(i, 1);
         }
       }
+      populateStorage();
     },
     modifyTask({ context, index }, changeObject) {
       const taskLocation = map[context].findIndex(
@@ -107,6 +113,7 @@ const Context = (() => {
         map[changeObject.context].push(task);
         map[context].splice(taskLocation, 1);
       }
+      populateStorage();
     },
     isContext(name) {
       return name in map;
@@ -121,7 +128,7 @@ const plusButton = document.querySelector("button#add-task");
 const taskList = document.querySelector("ul#task-list");
 
 const nav = document.querySelector("nav");
-const inboxButton = document.querySelector("button#inbox");
+// const inboxButton = document.querySelector("button#inbox");
 const addProjectButton = document.querySelector("button#add-project");
 
 const projectMenu = document.querySelector("#project-menu");
@@ -172,7 +179,7 @@ const renderTask = (task, showProject) => {
 
   editButton.addEventListener("click", () => {
     closeEdit();
-    const editMenu = lg.createEditMenu(task, Context.getProjects());
+    const editMenu = lg.createEditMenu(task, Context.getContexts());
 
     editMenu.onsubmit = (event) => {
       event.preventDefault();
@@ -230,6 +237,23 @@ const setContext = (context) => {
   tasks.forEach((task) => renderTask(task, isDefaultContext));
 };
 
+const setupNavButton = (context) => {
+  const contextButton = lg.createContextButton(context);
+  contextButton.addEventListener("click", () => {
+    setContext(context);
+  });
+
+  nav.append(contextButton);
+};
+
+const setNav = () => {
+  const contexts = Context.getContexts();
+  while (nav.firstChild) {
+    nav.removeChild(nav.firstChild);
+  }
+  contexts.forEach((context) => setupNavButton(context));
+};
+
 plusButton.addEventListener("click", () => {
   if (!newTaskInput.value) return;
 
@@ -248,10 +272,6 @@ plusButton.addEventListener("click", () => {
   closeEdit();
 });
 
-inboxButton.addEventListener("click", () => {
-  setContext("default");
-});
-
 addProjectButton.addEventListener("click", () => {
   toggleProjectMenu();
 
@@ -267,12 +287,10 @@ addProjectButton.addEventListener("click", () => {
     setContext(project);
     projectInput.value = "";
 
-    const projectButton = lg.createProjectButton(project);
-    projectButton.addEventListener("click", () => {
-      setContext(project);
-    });
-
-    nav.append(projectButton);
+    setNav(project);
   });
   cancelButton.addEventListener("click", toggleProjectMenu);
 });
+
+setContext("default");
+setNav("default");
