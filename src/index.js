@@ -260,12 +260,11 @@ const setContext = (context) => {
 plusButton.addEventListener("click", () => {
   if (!newTaskInput.value) return;
 
-  const context = Context.getCurrent();
   renderTask(
     Context.addTask({
       name: newTaskInput.value,
       dueDate: dueDateInput.value ? `${dueDateInput.value}T00:00` : null,
-      context,
+      context: Context.getCurrent(),
       completed: false,
     })
   );
